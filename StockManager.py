@@ -9,9 +9,9 @@ class to handle all stocks get information
 """
 class StockManager():
     
-    months={'Jan':'01','Feb':'02','Mar':'03','Apr':'04','May':'05','Jun':'06','Jul':'07','Aug':'08','Sep':'09','Oct':'10','Nov':'11','Dec':'12'}
     
     def __init__(self):
+        self.months={'Jan':'01','Feb':'02','Mar':'03','Apr':'04','May':'05','Jun':'06','Jul':'07','Aug':'08','Sep':'09','Oct':'10','Nov':'11','Dec':'12'}
         with open("APIKEYS.json", "r") as file:
             data = json.loads(file.read())
             key = data["Finnhub"]
@@ -27,7 +27,8 @@ class StockManager():
         req = requests.get(self.request.format('quote','symbol='+symbol))
         return req.json()
 
-    """modify quote to be more accesible
+    """
+    modify quote to be more accesible
     
     Returns:
         [dict] -- [the modified quote]
@@ -37,7 +38,7 @@ class StockManager():
         fixedDict=dict()
         fixedDict["stockSymbol"]=symbol
         readableSplittedTime=time.ctime(req['t']).split()
-        readableTime=readableSplittedTime[1]+'.'+self.months[readableSplittedTime[2]]+'.'+readableSplittedTime[3][2:]
+        readableTime=readableSplittedTime[2] + '.' + self.months[readableSplittedTime[1]] + '.' + readableSplittedTime[4]
         fixedDict['date']=readableTime
         fixedDict['current_price']= round(req['c'],2)
         fixedDict['today_high']=req['h']
