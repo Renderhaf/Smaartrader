@@ -74,7 +74,7 @@ class StockManager():
             s=dict()
             readableSplittedTime=time.ctime(req['t'][i]).split()
             #dd.mm.yy
-            readableTime=readableSplittedTime[1]+'.'+self.months[readableSplittedTime[2]]+'.'+readableSplittedTime[3][2:]
+            readableTime=readableSplittedTime[2] + '.' + self.months[readableSplittedTime[1]] + '.' + readableSplittedTime[4]
             #date
             #s['dt']=readableTime
             #closed price
