@@ -20,14 +20,14 @@ class StockManager():
         req = self.getRawQuote(symbol)
         fixedDict=dict()
         fixedDict["stockSymbol"]=symbol
-        fixedDict['current_price']=req['c']
+        fixedDict['current_price']= round(req['c'],2)
         fixedDict['today_high']=req['h']
         fixedDict['today_low']=req['l']
         fixedDict['open_price']=req['o']
         fixedDict['previous_close']=req['pc']
         fixedDict['time_stamp']=req['t']
-        fixedDict['difference']=req['c']-req['pc']
-        fixedDict['difference_percentage']=100*fixedDict['difference']/req['pc']
+        fixedDict['difference']= round(req['c']-req['pc'],2)
+        fixedDict['difference_percentage']= round(100*fixedDict['difference']/req['pc'],2)
         return fixedDict    
 
 
