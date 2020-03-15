@@ -10,9 +10,9 @@ class InfoManager():
         if time=="Y":
             return self.stockManager.getRawCandle(symbol)
         elif time=="M":
-            return self.stockManager.getRawCandle(symbol, count=30)
-        elif time=="D":
-            return self.stockManager.getRawCandle(symbol, count=1)
+            return self.stockManager.getRawCandle(symbol, count=720, resolution=60)
+        elif time=="W":
+            return self.stockManager.getRawCandle(symbol, count=336, resolution=30)
 
     def getStockQuote(self, symbol):
         return self.stockManager.getQuote(symbol)

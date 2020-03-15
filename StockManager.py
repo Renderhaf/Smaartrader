@@ -16,6 +16,7 @@ class StockManager():
             data = json.loads(file.read())
             key = data["Finnhub"]
         self.request = "https://finnhub.io/api/v1/{}?{}&token=" + key
+        self.backLoggingAttempts = 5
     
     """
     get stock quote
@@ -57,9 +58,13 @@ class StockManager():
         [dict] -- [dictionary of stocks data over time]
     """
     def getRawCandle(self,symbol,resolution='D',count=365)->dict:
+        # #If you are on a weekend, the 
+        # if time.asctime().split(" ")[0] in ["Sat", "Sun"]:
+
         requestExtension=('symbol={}&resolution={}&count={}').format(symbol,resolution,count)
         req = requests.get(self.request.format('stock/candle',requestExtension))
-        return req.json()
+        data = req.json()
+        return data
 
     """candle data
     modified stocks over time
