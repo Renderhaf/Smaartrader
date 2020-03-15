@@ -4,22 +4,41 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 
+"""
+class to handle all stocks get information
+"""
 class StockManager():
+    
+    months={'Jan':'01','Feb':'02','Mar':'03','Apr':'04','May':'05','Jun':'06','Jul':'07','Aug':'08','Sep':'09','Oct':'10','Nov':'11','Dec':'12'}
+    
     def __init__(self):
         with open("APIKEYS.json", "r") as file:
             data = json.loads(file.read())
             key = data["Finnhub"]
         self.request = "https://finnhub.io/api/v1/{}?{}&token=" + key
     
+    """
+    get stock quote
+    
+    Returns:
+        [dict] -- [get raw quote from api]
+    """
     def getRawQuote(self, symbol) -> dict:
         req = requests.get(self.request.format('quote','symbol='+symbol))
         return req.json()
 
-
-    def getQuote(self,symbol):
+    """modify quote to be more accesible
+    
+    Returns:
+        [dict] -- [the modified quote]
+    """
+    def getQuote(self,symbol)->dict:
         req = self.getRawQuote(symbol)
         fixedDict=dict()
         fixedDict["stockSymbol"]=symbol
+        readableSplittedTime=time.strftime("%a, %d %b %Y %H:%M:%S %Z", time.localtime(req['t'])).split()
+        readableTime=readableSplittedTime[1]+'.'+months[readableSplittedTime[2]]+'.'+readableSplittedTime[3][2:]
+        fixedDict['date']=readableTime
         fixedDict['current_price']= round(req['c'],2)
         fixedDict['today_high']=req['h']
         fixedDict['today_low']=req['l']
@@ -31,26 +50,64 @@ class StockManager():
         return fixedDict    
 
 
-
-    def getRawCandle(self,symbol,resolution='D',count=365):
+    """raw candle data
+    stocks over time
+    Returns:
+        [dict] -- [dictionary of stocks data over time]
+    """
+    def getRawCandle(self,symbol,resolution='D',count=365)->dict:
         requestExtension=('symbol={}&resolution={}&count={}').format(symbol,resolution,count)
         req = requests.get(self.request.format('stock/candle',requestExtension))
         return req.json()
 
+    """candle data
+    modified stocks over time
+    Returns:
+        [dict] -- [dictionary of stocks data over time, sorted by time]
+    """
+    def getCandle(self,symbol,resolution='D',count=365)->dict:
+        req=self.getRawCandle(symbol,resolution,count)
+        fixedList=dict()
+        #dict_keys(['c' closed, 'h' high, 'l' low, 'o' open, 's' ok or no data, 't timestamp', 'v' volume])
+        for i in range(len(req['c'])):
+            s=dict()
+            readableSplittedTime=time.strftime("%a, %d %b %Y %H:%M:%S %Z", time.localtime(req['t'][i])).split()
+            #dd.mm.yy
+            readableTime=readableSplittedTime[1]+'.'+self.months[readableSplittedTime[2]]+'.'+readableSplittedTime[3][2:]
+            #date
+            #s['dt']=readableTime
+            #closed price
+            s['c']=req['c'][i]
+            #timestamp
+            s['t']=req['t'][i]
+            #open price
+            s['o']=req['o'][i]
+            #volume-number of buys
+            s['v']=req['v'][i]
+            #day's high price
+            s['h']=req['h'][i]
+            #day's low price
+            s['l']=req['l'][i]
+            #day's difference
+            s['df']= round(req['c'][i]-req['c'][i-1],2) if i>0 else 0
+            #day's difference percentage
+            s['dfp']= round(100*s['df']/req['c'][i-1],2) if i>0 else 0
+            fixedList[readableTime]=s
+        return fixedList
 
 def main():
     a=StockManager()
-    #printGraph('AAPL')
-    c=a.getRawCandle('AAPL',count=1500)['c']
-    print(c)
-    print(len(c))
+    printGraph('GOOGL')
 
-def printGraph(symbol,resolution='D',count=10000):
+
+"""print stocks data
+"""
+def printGraph(symbol,resolution='D',count=365):
     a=StockManager()
-    c=a.getRawCandle(symbol)['c']
+    can=a.getCandle(symbol,resolution,count)
+    c=[s['c'] for s in can.values()]
     plt.plot(range(0,len(c)), c)  # Plot some data on the axes.
     plt.show()
 
 if __name__ == "__main__":
     main()
-
