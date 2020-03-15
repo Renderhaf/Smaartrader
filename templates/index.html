@@ -37,6 +37,7 @@
         <p class="h1 m-3">Welcome to Smaartrader</p>
 
         <div class="row m-2">
+            <!-- Repeates for every stock -->
             {% if stocks %}
                 {% for stock in stocks %}
                     <div class="col-md-4 p-3 col-sm-12">
@@ -69,7 +70,8 @@
                                     var {{stock}}BackColor = "";
                                     var {{stock}}Chart;
                                     var {{stock}}ctx;
-
+                                    
+                                    //make an HTTP post request to the server, asking for the candle and quote data
                                     $.post("/", {"type":"quote+candle", "name":"{{stock}}", "time": "Y"}, function(stockData, succsses){
                                         let stockPrice = stockData["current_price"]
                                         document.getElementById("{{stock}}Price").innerHTML = stockPrice + "$"
@@ -88,7 +90,7 @@
                                         }
                                         document.getElementById("{{stock}}Diff").innerHTML = stockDiff
 
-
+                                        //Change the graph colors based on the diff from the quote 
                                         if (parseFloat(stockDiff) > 0){
                                             {{stock}}BorderColor = 'rgba(21, 255, 132, 1)';
                                             {{stock}}BackColor = 'rgba(21, 255, 132, 0.2)';
@@ -97,14 +99,14 @@
                                             {{stock}}BackColor = 'rgba(255, 99, 132, 0.2)';
                                         }
                                         
-
+                                        //Init the stock chart 
                                         {{stock}}ctx = document.getElementById('{{stock}}-chart').getContext('2d');
                                         {{stock}}Chart = startChart({{stock}}ctx, stockData["prices"], stockData["dates"], {{stock}}BackColor, {{stock}}BorderColor);
                                         
                                     })
 
+                                    //A function that passes the jinja information to a normal javascript function
                                     function {{stock}}selectTime(btn){
-                                        {{stock}}Chart
                                         selectTime(btn, {{stock}}Chart, {{stock}}ctx, {{stock}}BackColor, {{stock}}BorderColor);
                                     }
                                 </script>
@@ -117,18 +119,22 @@
 
             <script>
                 function selectTime(btn, Chart, ctx, BackColor, BorderColor){
+                    //get all the buttons in that button group
                     otherBtns = btn.parentElement.childNodes
                     for (var i = 0; i < otherBtns.length; i++){
+                        //make sure that they are buttons
                         if (otherBtns[i].nodeName == "DIV"){
+                            //unselect them all
                             otherBtns[i].classList.remove("btn-primary", "btn-secondary");
                             otherBtns[i].classList.add("btn-secondary")
                         }
                     }
 
+                    //select the clicked button
                     btn.classList.remove("btn-secondary");
                     btn.classList.add("btn-primary");
-                    //Send new request
 
+                    //get the new info and update the chart with it
                     $.post("/", {"type":"candle", "name":btn.parentElement.getAttribute("data"), "time": btn.innerHTML}, function(stockData, succsses){
                         updateChart(Chart, stockData["prices"], stockData["dates"]);
                     });
@@ -155,6 +161,7 @@
                             legend: {
                                 display: false
                             },
+                            //this makes the gridlines not display
                             scales: {
                                 xAxes: [{
                                     gridLines: {
