@@ -64,7 +64,7 @@
                                     <div class="btn-group" data="{{stock}}">
                                         <div class="btn btn-primary" onclick="{{stock}}selectTime(this)">Y</div>
                                         <div class="btn btn-secondary" onclick="{{stock}}selectTime(this)">M</div>
-                                        <div class="btn btn-secondary" onclick="{{stock}}selectTime(this)">D</div>
+                                        <div class="btn btn-secondary" onclick="{{stock}}selectTime(this)">W</div>
                                     </div>
                                 </div>
                                 <script>
@@ -184,6 +184,7 @@
                 }
                 
                 function updateChart(chart, yAxisData, xAxisData){
+                    Chart.defaults.global.animation.duration = 0;
                     chart.data.labels = xAxisData
                     chart.data.datasets.forEach((dataset) => {
                         dataset.data = yAxisData

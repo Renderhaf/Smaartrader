@@ -27,8 +27,8 @@ def index():
 
         if request.form["type"] == "candle":
             stockData = infoManager.getStockCandle(request.form["name"], request.form["time"])
-            prices = [int(s['c']) for s in stockData]
-            dates = [time.ctime(t) for t in [s['t'] for s in stockData]]
+            prices = stockData["c"]
+            dates = [time.ctime(t) for t in stockData["t"]]
             data = {"prices":prices, "dates":dates}
             return data
 
@@ -40,5 +40,5 @@ def index():
         return render_template("index.html", stocks = ["AAPL", "GOOGL", "TEVA"])
 
 if __name__ == "__main__":
-    port = os.environ.get('PORT') or 42069
+    port = os.environ.get('PORT') or 5000
     app.run(host='0.0.0.0', port=int(port))
