@@ -36,8 +36,8 @@ class StockManager():
         req = self.getRawQuote(symbol)
         fixedDict=dict()
         fixedDict["stockSymbol"]=symbol
-        readableSplittedTime=time.strftime("%a, %d %b %Y %H:%M:%S %Z", time.localtime(req['t'])).split()
-        readableTime=readableSplittedTime[1]+'.'+months[readableSplittedTime[2]]+'.'+readableSplittedTime[3][2:]
+        readableSplittedTime=time.ctime(req['t']).split()
+        readableTime=readableSplittedTime[1]+'.'+self.months[readableSplittedTime[2]]+'.'+readableSplittedTime[3][2:]
         fixedDict['date']=readableTime
         fixedDict['current_price']= round(req['c'],2)
         fixedDict['today_high']=req['h']
@@ -47,7 +47,7 @@ class StockManager():
         fixedDict['time_stamp']=req['t']
         fixedDict['difference']= round(req['c']-req['pc'],2)
         fixedDict['difference_percentage']= round(100*fixedDict['difference']/req['pc'],2)
-        return fixedDict    
+        return fixedDict
 
 
     """raw candle data
@@ -71,7 +71,7 @@ class StockManager():
         #dict_keys(['c' closed, 'h' high, 'l' low, 'o' open, 's' ok or no data, 't timestamp', 'v' volume])
         for i in range(len(req['c'])):
             s=dict()
-            readableSplittedTime=time.strftime("%a, %d %b %Y %H:%M:%S %Z", time.localtime(req['t'][i])).split()
+            readableSplittedTime=time.ctime(req['t'][i]).split()
             #dd.mm.yy
             readableTime=readableSplittedTime[1]+'.'+self.months[readableSplittedTime[2]]+'.'+readableSplittedTime[3][2:]
             #date
@@ -97,10 +97,9 @@ class StockManager():
 
 def main():
     a=StockManager()
-    printGraph('GOOGL')
+    #printGraph('GOOGL')
 
-
-"""print stocks data
+"""print stocks data graph
 """
 def printGraph(symbol,resolution='D',count=365):
     a=StockManager()

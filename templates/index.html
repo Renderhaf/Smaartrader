@@ -55,7 +55,7 @@
                                     <span id="{{stock}}Diff"></span>
                                 </div>
                                 <div class="col-2">
-                                    <span id="{{stock}}Precent"></span>
+                                    <span id="{{stock}}percent"></span>
                                 </div>
                                 <div class="col-sm-3 d-md-none d-xs-none d-sm-block">
                                     <!-- Filler Div -->
@@ -78,8 +78,8 @@
                                         let stockPrice = stockData["current_price"]
                                         document.getElementById("{{stock}}Price").innerHTML = stockPrice + "$"
 
-                                        let stockPrecent = stockData["difference_percentage"]
-                                        document.getElementById("{{stock}}Precent").innerHTML = stockPrecent + "%"
+                                        let stockpercent = stockData["difference_percentage"]
+                                        document.getElementById("{{stock}}percent").innerHTML = stockpercent + "%"
 
                                         let stockDiff = stockData["difference"]
                                         //▲, ▼
