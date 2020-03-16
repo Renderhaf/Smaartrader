@@ -11,20 +11,20 @@ spoilTimes = {"Y": 30, "M": 30, "W": 10, "Q": 0.5}
 expirationDateKey = "expirationDate"
 spoilTimeConversion = 3600
 
-'''
-Returns whether the data is expired or not
-'''
 def isExpired(data : dict):
+    '''
+    Returns whether the data is expired or not
+    '''
     try:
-        expiredStatus = int(data[expirationDateKey]) <= int(time.time())
+        expiredStatus = int(data[expirationDateKey]) < int(time.time())
     except KeyError:
         return True
     return expiredStatus
 
-'''
-Mutates the dict so that it has a correct expiration date
-'''
 def putExpirationDate(data: dict) -> None:
+    '''
+    Mutates the dict so that it has a correct expiration date
+    '''
     try:
         expirationDiff = spoilTimes[data["timeframe"]] * spoilTimeConversion
     except KeyError:
