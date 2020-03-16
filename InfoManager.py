@@ -1,6 +1,5 @@
-import StockManager as SM
-import DatabaseManager as DM
-
+from StockManager import StockManager as SM
+from DatabaseManager import DatabaseManager as DM
 
 class InfoManager():
     #how does the resolution/count ratio work?
@@ -8,38 +7,51 @@ class InfoManager():
     resolutionToCount={'D':365,60:720,30:336}
     resolutionToTime={'D':'Y',60:'M',30:'W'}
     
-    
     @staticmethod
     def getStockCandle(symbol,resolution='D',count=365)->dict:
-        """get stock candle data form stock manager
-    
+        """get candle from SM
+        
+        Arguments:
+            symbol {str} -- stock symbol(eg:AAPL)
+        
+        Keyword Arguments:
+            resolution {str} -- resolution of checks (default: {'D'})
+        
         Returns:
-            [dict] -- [candle]
+            dict -- candle
         """
-        return SM.StockManager.getCandle(symbol,resolution,count)
-    
+        return SM.getCandle(symbol,resolution,count)
     
     @staticmethod
     def getStockQuote(symbol)->dict:
-        """get stocks current quote from stock manager
-    
-        Returns:
-            [dict] -- [cuurent quote data]
-        """
-        return SM.StockManager.getQuote(symbol)
-    
-    
-    @staticmethod
-    def getCandle(symbol,resolution='D')->dict:
-        """general get candle, checks where to get it from
+        """get current quote of stock
+        
+        Arguments:
+            symbol {str} -- stock symbol(eg:GOOGL)
         
         Returns:
-            [dict] -- [candle stock data]
+            dict -- the quote
+        """
+        return SM.getQuote(symbol)
+    
+
+    @staticmethod
+    def getCandle(symbol,resolution='D')->dict:
+        """general getcandle, decides where to take the candle from
+        
+        Arguments:
+            symbol {str} -- stock symbol(eg:AAPL)
+        
+        Keyword Arguments:
+            resolution {str} -- resolution of checks (default: {'D'})
+        
+        Returns:
+            dict -- candle
         """
         #one of the options in DB
         if resolution in InfoManager.resolutionToTime.keys():
             #updated DB
-            if DM.DatabaseManager.updated():
+            if DM.updated():
                 return InfoManager.getDBCandle()
             else:
                 #not updated,update and get from stock manger
@@ -48,29 +60,40 @@ class InfoManager():
             #not a regular DB option, get from stock manager
             return InfoManager.getStockCandle(symbol,resolution,InfoManager.resolutionToCount[resolution])
 
-    
     @staticmethod
     def getDBCandle(symbol,resolution='D')->dict:
-        """get candle from Database
-    
+        """get candle from DB
+        
+        Arguments:
+            symbol {str} -- stock symbol(eg:AAPL)
+        
+        Keyword Arguments:
+            resolution {str} -- resolution of checks (default: {'D'})
+        
         Returns:
-            [dict] -- [candle of stock]
+            dict -- candle
         """
-        oCandle = DM.DatabaseManager.getData(symbol,resolution)
+        oCandle = DM.getData(symbol,resolution)
         return dict(oCandle)
     
-    
-    #TODO make function threded
+    #
+    #TODO make function threaded
     @staticmethod
     def updateDBFromSM(symbol,resolution='D')->dict:
-        """update database and get data from stock manager
-    
+        """get candle from SM and store to DB
+        
+        Arguments:
+            symbol {str} -- stock symbol(eg:AAPL)
+        
+        Keyword Arguments:
+            resolution {str} -- resolution of checks (default: {'D'})
+        
         Returns:
-            [dict] -- [candle]
+            dict -- candle
         """
-        oCandle=SM.StockManager.getCandle(symbol,resolution,InfoManager.resolutionToCount[resolution])
+        oCandle=SM.getCandle(symbol,resolution,InfoManager.resolutionToCount[resolution])
         #make threaded
-        DM.DatabaseManager.storeData(oCandle,symbol,resolution)
+        DM.storeData(oCandle,symbol,resolution)
         #copy dictionary
         return dict(oCandle)
 
