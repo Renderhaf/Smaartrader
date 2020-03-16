@@ -1,18 +1,56 @@
-import StockManager
-import DatabaseManager
+import StockManager as SM
+import DatabaseManager as DM
+
 
 class InfoManager():
-    def __init__(self):
-        self.stockManager = StockManager.StockManager()
-        self.databaseManager = DatabaseManager.DatabaseManager()
+    #how does the resolution/count ratio work?
+    timeToResolution=resolutions={'Y':('D',365),'M':(60,720),'W':(30,336)}
+    
+    @staticmethod
+    def getStockCandle(symbol,resolution='D',count=365)->dict:
+        return SM.StockManager.getCandle(symbol,resolution,count)
+    
+    @staticmethod
+    def getStockQuote(symbol)->dict:
+        return SM.StockManager.getQuote(symbol)
+    
+    @staticmethod
+    def getCandle(symbol,resolution='D',count=-1)->dict:
+        #default count as in db
+        if count==-1:
+            count=DM.DatabaseManager.resolutions[resolution]
 
-    def getStockCandle(self, symbol, time="Y"):
-        if time=="Y":
-            return self.stockManager.getRawCandle(symbol)
-        elif time=="M":
-            return self.stockManager.getRawCandle(symbol, count=720, resolution=60)
-        elif time=="W":
-            return self.stockManager.getRawCandle(symbol, count=336, resolution=30)
+        #one of the options in DB
+        if resolution in DM.resolutions.keys() and count<=DM.DatabaseManager.resolutions[resolution]:
+            if DM.DatabaseManager.updated()==True:
+                return InfoManager.getDBCandle()
+            else:
+                return InfoManager.updateDBFromSM()
+        #should't be in DB
+        else:
+            return InfoManager.getStockCandle(symbol,resolution,count)
 
-    def getStockQuote(self, symbol):
-        return self.stockManager.getQuote(symbol)
+
+    @staticmethod
+    def getDBCandle(symbol,resolution='D',count=365)->dict:
+        oCandle = DM.DatabaseManager.getData(symbol,resolution)
+        return cutDict(oCandle,count)
+    
+    #ToDo make function threded
+    @staticmethod
+    def updateDBFromSM(symbol,resolution='D',count=365)->dict:
+        oCandle=SM.StockManager.getCandle()
+        #make threaded
+        DM.DatabaseManager.storeData(oCandle,symbol,resolution)
+        #copy dictionary
+        return cutDict(oCandle,count)
+
+
+
+#copy so its a new dict
+def cutDict(oD,count)->dict:
+    d=dict()
+    for key in oD.keys():
+        d[key]=oD[key][0:count]
+    return d
+    
