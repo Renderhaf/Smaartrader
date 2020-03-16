@@ -75,7 +75,6 @@ class StockManager():
         Returns:
             dict -- candle
         """
-        
         requestExtension=('symbol={}&resolution={}&count={}').format(symbol,resolution,count)
         req = requests.get(StockManager.request.format('stock/candle',requestExtension))
         data = req.json()

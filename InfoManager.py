@@ -7,7 +7,6 @@ class InfoManager():
     resolutionToCount={'D':365,60:720,30:336}
     resolutionToTime={'D':'Y',60:'M',30:'W'}
     
-
     @staticmethod
     def getStockCandle(symbol,resolution='D',count=365)->dict:
         """get candle from SM
