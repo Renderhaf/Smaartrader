@@ -4,37 +4,47 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 
-"""
-class to handle all stocks get information
-"""
+
+
 class StockManager():
     #static 
-    with open("APIKEYS.json", "r") as file:
-        data = json.loads(file.read())
-        key = data["Finnhub"]
+    file=open("APIKEYS.json", "r")
+    data = json.loads(file.read())
+    key = data["Finnhub"]
+
     request = "https://finnhub.io/api/v1/{}?{}&token=" + key
     backLoggingAttempts = 5
     months={'Jan':'01','Feb':'02','Mar':'03','Apr':'04','May':'05','Jun':'06','Jul':'07','Aug':'08','Sep':'09','Oct':'10','Nov':'11','Dec':'12'}
-
-    """
-    get stock quote
     
-    Returns:
-        [dict] -- [get raw quote from api]
-    """
+    #delete help variables
+    file.close()
+    del data
+    del key
+    del file
+
     @staticmethod
     def getRawQuote( symbol) -> dict:
+        """get current quote of stock-uneditted
+        
+        Arguments:
+            symbol {str} -- stock symbol(eg:GOOGL)
+        
+        Returns:
+            dict -- the quote
+        """
         req = requests.get(request.format('quote','symbol='+symbol))
         return req.json()
 
-    """
-    modify quote to be more accesible
-    
-    Returns:
-        [dict] -- [the modified quote]
-    """
     @staticmethod
     def getQuote(symbol)->dict:
+        """get current quote of stock- editted
+        
+        Arguments:
+            symbol {str} -- stock symbol(eg:GOOGL)
+        
+        Returns:
+            dict -- the quote
+        """
         req = getRawQuote(symbol)
         fixedDict=dict()
         fixedDict["stockSymbol"]=symbol
@@ -52,28 +62,39 @@ class StockManager():
         return fixedDict
 
 
-    """raw candle data
-    stocks over time
-    Returns:
-        [dict] -- [dictionary of stocks data over time]
-    """
     @staticmethod
     def getRawCandle(symbol,resolution='D',count=365)->dict:
-        # #If you are on a weekend, the 
-        # if time.asctime().split(" ")[0] in ["Sat", "Sun"]:
-
+        """get candle of stock-uneditted
+        
+        Arguments:
+            symbol {str} -- stock symbol(eg:AAPL)
+        
+        Keyword Arguments:
+            resolution {str} -- resolution of checks (default: {'D'})
+        
+        Returns:
+            dict -- candle
+        """
+        
         requestExtension=('symbol={}&resolution={}&count={}').format(symbol,resolution,count)
         req = requests.get(StockManager.request.format('stock/candle',requestExtension))
         data = req.json()
         return data
 
-    """candle data
-    modified stocks over time
-    Returns:
-        [dict] -- [dictionary of stocks data over time, sorted by time]
-    """
+
     @staticmethod
     def getCandle(symbol,resolution='D',count=365)->dict:
+        """get candle of stock- editted ,added readable date and difference+percentage 
+        
+        Arguments:
+            symbol {str} -- stock symbol(eg:AAPL)
+        
+        Keyword Arguments:
+            resolution {str} -- resolution of checks (default: {'D'})
+        
+        Returns:
+            dict -- candle
+        """
         req=StockManager.getRawCandle(symbol,resolution,count)
         #dict_keys(['c' closed, 'h' high, 'l' low, 'o' open, 's' ok or no data, 't timestamp', 'v' volume])
         req['dt']=list()
@@ -90,6 +111,7 @@ class StockManager():
             #day's difference percentage
             req['dfp'].append(round(100*req['df'][i]/req['c'][i-1],2) if i>0 else 0)
         return req
+
 
 def main():
     a=StockManager()
