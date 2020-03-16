@@ -8,31 +8,34 @@ class InfoManager():
     resolutionToCount={'D':365,60:720,30:336}
     resolutionToTime={'D':'Y',60:'M',30:'W'}
     
-    """get stock candle data form stock manager
     
-    Returns:
-        [dict] -- [candle]
-    """
     @staticmethod
     def getStockCandle(symbol,resolution='D',count=365)->dict:
+        """get stock candle data form stock manager
+    
+        Returns:
+            [dict] -- [candle]
+        """
         return SM.StockManager.getCandle(symbol,resolution,count)
     
-    """get stocks current quote from stock manager
     
-    Returns:
-        [dict] -- [cuurent quote data]
-    """
     @staticmethod
     def getStockQuote(symbol)->dict:
+        """get stocks current quote from stock manager
+    
+        Returns:
+            [dict] -- [cuurent quote data]
+        """
         return SM.StockManager.getQuote(symbol)
     
-    """general get candle, checks where to get it from
     
-    Returns:
-        [dict] -- [candle stock data]
-    """
     @staticmethod
     def getCandle(symbol,resolution='D')->dict:
+        """general get candle, checks where to get it from
+        
+        Returns:
+            [dict] -- [candle stock data]
+        """
         #one of the options in DB
         if resolution in InfoManager.resolutionToTime.keys():
             #updated DB
@@ -45,24 +48,26 @@ class InfoManager():
             #not a regular DB option, get from stock manager
             return InfoManager.getStockCandle(symbol,resolution,InfoManager.resolutionToCount[resolution])
 
-    """get candle from Database
     
-    Returns:
-        [dict] -- [candle of stock]
-    """
     @staticmethod
     def getDBCandle(symbol,resolution='D')->dict:
+        """get candle from Database
+    
+        Returns:
+            [dict] -- [candle of stock]
+        """
         oCandle = DM.DatabaseManager.getData(symbol,resolution)
         return dict(oCandle)
     
-    """update database and get data from stock manager
     
-    Returns:
-        [dict] -- [candle]
-    """
-    #ToDo make function threded
+    #TODO make function threded
     @staticmethod
     def updateDBFromSM(symbol,resolution='D')->dict:
+        """update database and get data from stock manager
+    
+        Returns:
+            [dict] -- [candle]
+        """
         oCandle=SM.StockManager.getCandle(symbol,resolution,InfoManager.resolutionToCount[resolution])
         #make threaded
         DM.DatabaseManager.storeData(oCandle,symbol,resolution)
