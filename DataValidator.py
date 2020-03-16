@@ -15,7 +15,11 @@ spoilTimeConversion = 3600
 Returns whether the data is expired or not
 '''
 def isExpired(data : dict):
-    return int(data[expirationDateKey]) <= int(time.time())
+    try:
+        expiredStatus = int(data[expirationDateKey]) <= int(time.time())
+    except KeyError:
+        return True
+    return expiredStatus
 
 '''
 Mutates the dict so that it has a correct expiration date
