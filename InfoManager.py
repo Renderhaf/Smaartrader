@@ -77,8 +77,8 @@ class InfoManager():
         oCandle = DM.getData(symbol,resolution)
         return dict(oCandle)
     
-
-    #ToDo make function threaded
+    #
+    #TODO make function threaded
     @staticmethod
     def updateDBFromSM(symbol,resolution='D')->dict:
         """get candle from SM and store to DB
