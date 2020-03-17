@@ -52,7 +52,8 @@ def getCandle(symbol,timeframe='Y')->dict:
     #         return updateDBFromSM(symbol,resolution)
     # else:
     #     #not a regular DB option, get from stock manager
-
+    
+    #TODO - add source switching for the candle data
     #Currently just give the candle from the API, due to database slowdowns
     return getStockCandle(symbol,timeframe)
 
