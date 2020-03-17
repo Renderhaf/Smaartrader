@@ -1,5 +1,6 @@
 import StockManager as SM
 import DatabaseManager as DM
+import LocalDataManager as LM
 
 timeToResolution={'Y':'D','M':60,'W':30}
 resolutionToCount={'D':365,60:720,30:336}
@@ -42,20 +43,19 @@ def getCandle(symbol,timeframe='Y')->dict:
     Returns:
         dict -- candle
     """
-    # #one of the options in DB
-    # if timeframe in timeToResolution.keys():
-    #     #updated DB
-    #     if DM.updated():
-    #         return getDBCandle()
-    #     else:
-    #         #not updated,update and get from stock manger
-    #         return updateDBFromSM(symbol,resolution)
-    # else:
-    #     #not a regular DB option, get from stock manager
+    #TODO - add database switching
     
-    #TODO - add source switching for the candle data
-    #Currently just give the candle from the API, due to database slowdowns
-    return getStockCandle(symbol,timeframe)
+    #Get the locally stored data
+    localData = LM.getData(symbol, "candle", timeframe)
+    #If the data searched for is not in the local storage, put it there from the API
+    if len(localData.keys()) == 0:
+        stockData = getStockCandle(symbol,timeframe)
+        #Put the timeframe into the data
+        stockData["timeframe"] = timeframe
+        LM.putData(symbol, "candle", stockData)
+        return stockData
+    else:
+        return localData
 
 def getDBCandle(symbol,timeframe='Y')->dict:
     """get candle from DB

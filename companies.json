@@ -1,7 +1,1 @@
-{
-    "Tesla": "TSLA",
-    "Apple": "AAPL",
-    "Alphabet": "GOOGL",
-    "Intel": "INTC",
-    "Teva": "TEVA"
-}
+["AAPL", "GOOGL", "TEVA", "TSLA", "AMZN", "INTC"]

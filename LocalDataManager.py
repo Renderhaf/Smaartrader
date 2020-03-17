@@ -5,10 +5,12 @@ import time
 
 documentName = "localStorage.json"
 
-def putData(symbol, data: dict) -> None:   
+def putData(symbol: str, datatype: str, data: dict) -> None:   
     """
     Puts Data in the local storage if its not already there
     """
+    newdata = dict(data)
+    newdata["type"] = datatype
     try:
         with open(documentName, "r") as file:
             readFile = file.read()
@@ -23,17 +25,21 @@ def putData(symbol, data: dict) -> None:
     if symbol in currentData.keys():
         #Check if the data is already in the list
         for document in currentData[symbol]:
-            #To check if no appending is required, check if the type and timeframe match, and make sure its not expired
-            if document["type"] == data["type"] and document["timeframe"] == data["timeframe"] and not DV.isExpired(document):
-                return
+            #To check if no appending is required, check if the type and timeframe match
+            if document["type"] == datatype and document["timeframe"] == data["timeframe"]:
+                #The data is not expired
+                if not DV.isExpired(document):
+                    return
+                else:
+                    currentData[symbol].remove(document)
     else:
         currentData[symbol] = []
 
     #Puts an expiration date on the data
-    DV.putExpirationDate(data)
+    DV.putExpirationDate(newdata)
 
     with open(documentName, "w") as file:       
-        currentData[symbol].append(data)
+        currentData[symbol].append(newdata)
         file.write(json.dumps(currentData))
 
 def getData(symbol, datatype: str, timeframe: str) -> dict:
