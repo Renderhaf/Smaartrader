@@ -1,23 +1,19 @@
 import pymongo
 
 
-class DatabaseManager():
-    client = pymongo.MongoClient("mongodb+srv://StockManager:Manage123@maincluster-zlnck.mongodb.net/test?retryWrites=true&w=majority")
-    database =client.get_database("StocksInfo")
-    #TODO find out resolutions meaning
-    
-    isUpdated=False
+client = pymongo.MongoClient("mongodb+srv://StockManager:Manage123@maincluster-zlnck.mongodb.net/test?retryWrites=true&w=majority")
+database =client.get_database("StocksInfo")
+#TODO find out resolutions meaning
 
-    @staticmethod
-    def updated():
-        return False
-        #TODO write real updated checker
-    
-    @staticmethod
-    def storeData(candle,symbol,resolution):
-        pass
+isUpdated=False
 
-    @staticmethod
-    def getData(symbol,resolution):
-        pass
-    
+
+def updated():
+    return False
+    #TODO write real updated checker
+
+def storeData(candle,symbol,resolution):
+    pass
+
+def getData(symbol,resolution):
+    pass
