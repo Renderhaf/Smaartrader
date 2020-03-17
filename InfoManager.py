@@ -48,7 +48,7 @@ def getCandle(symbol,timeframe='Y')->dict:
     #Get the locally stored data
     localData = LM.getData(symbol, "candle", timeframe)
     #If the data searched for is not in the local storage, put it there from the API
-    if localData == {}:
+    if len(localData.keys()) == 0:
         stockData = getStockCandle(symbol,timeframe)
         #Put the timeframe into the data
         stockData["timeframe"] = timeframe

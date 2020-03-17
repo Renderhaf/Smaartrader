@@ -2,7 +2,8 @@ import json
 import requests
 import os
 import time
-from flask import Flask, render_template, request, flash
+from flask import Flask, render_template, request
+import json
 import time
 
 import InfoManager as IM
@@ -12,6 +13,8 @@ app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['HOST'] = 'localhost'
 
+with open("companies.json", "r") as file:
+    companies = json.loads(file.read())
 
 @app.route("/", methods = ["GET", "POST"])
 def index():
@@ -36,7 +39,8 @@ def index():
 
 
     else: 
-        return render_template("index.html", stocks = ["AAPL", "GOOGL", "TEVA"])
+
+        return render_template("index.html", stocks = companies)
 
 if __name__ == "__main__":
     port = os.environ.get('PORT') or 5000
