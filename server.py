@@ -19,13 +19,13 @@ def index():
         # print(request.form["type"], request.form["name"], request.form["time"])
         if request.form["type"] == "quote+candle":
             data = IM.getStockQuote(request.form["name"])
-            candleData = IM.getStockCandle(request.form["name"], request.form["time"])
+            candleData = IM.getCandle(request.form["name"], request.form["time"])
             data["prices"] = candleData["c"]
             data["dates"] = [time.ctime(t) for t in candleData["t"]]
             return data
 
         if request.form["type"] == "candle":
-            stockData = IM.getStockCandle(request.form["name"], request.form["time"])
+            stockData = IM.getCandle(request.form["name"], request.form["time"])
             prices = stockData["c"]
             dates = [time.ctime(t) for t in stockData["t"]]
             data = {"prices":prices, "dates":dates}
