@@ -19,7 +19,6 @@ with open("companies.json", "r") as file:
 @app.route("/", methods = ["GET", "POST"])
 def index():
     if request.method == "POST":
-        # print(request.form["type"], request.form["name"], request.form["time"])
         if request.form["type"] == "quote+candle":
             data = IM.getStockQuote(request.form["name"])
             candleData = IM.getCandle(request.form["name"], request.form["time"])
