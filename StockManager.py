@@ -96,8 +96,10 @@ def getCandle(symbol,resolution='D',count=365)->dict:
         readableSplittedTime=time.ctime(req['t'][i]).split()
         #dd.mm.yy
         readableDate=readableSplittedTime[2] + '.' + months[readableSplittedTime[1]] + '.' + readableSplittedTime[4]
-        
-        req['dt']=readableDate
+        if len(str(readableSplittedTime[2]))<2:
+            readableDate='0'+readableDate
+            
+        req['dt'].append(readableDate)
         
         req['df'].append(round(req['c'][i]-req['c'][i-1],2) if i>0 else 0)
         #day's difference percentage
@@ -106,8 +108,9 @@ def getCandle(symbol,resolution='D',count=365)->dict:
 
 
 def main():
-    printGraph('GOOGL')
-    print(getQuote("AAPL"))
+    #printGraph('AAPL','D',30)
+    print(getCandle('AAPL','D',30)['dt'] )
+    #print(getQuote("AAPL"))
 
 """print stocks data graph
 """
