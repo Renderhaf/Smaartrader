@@ -4,7 +4,7 @@ import DataValidator as DV
 client = pymongo.MongoClient("mongodb+srv://StockManager:Manage123@maincluster-zlnck.mongodb.net/test?retryWrites=true&w=majority")
 database = client.get_database("StocksInfo")
 
-def storeData(symbol, data):
+def storeData(symbol:str, data:dict)->None:
     timeframe = data["timeframe"]
     currentStoredData = getData(symbol, timeframe)
     #If the data is expired, remove it
@@ -19,11 +19,11 @@ def storeData(symbol, data):
         DV.putExpirationDate(newdata)
         collection.insert_one(newdata)
 
-def removeData(symbol, timeframe):
+def removeData(symbol:str, timeframe:str)->None:
     collection = database.get_collection(symbol)
     collection.delete_one({"timeframe": timeframe})
 
-def getData(symbol, timeframe):
+def getData(symbol:str, timeframe:str)->dict:
     collection = database.get_collection(symbol)
     data = list(collection.find({"timeframe": timeframe}))
     if len(data) == 0:

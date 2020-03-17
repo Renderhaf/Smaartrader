@@ -5,7 +5,7 @@ timeToResolution={'Y':'D','M':60,'W':30}
 resolutionToCount={'D':365,60:720,30:336}
 resolutionToTime={'D':'Y',60:'M',30:'W'}
     
-def getStockCandle(symbol,time='Y')->dict:
+def getStockCandle(symbol,timeframe='Y')->dict:
     """get candle from SM
     
     Arguments:
@@ -17,7 +17,7 @@ def getStockCandle(symbol,time='Y')->dict:
     Returns:
         dict -- candle
     """
-    return SM.getCandle(symbol,timeToResolution[time],resolutionToCount[timeToResolution[time]])
+    return SM.getCandle(symbol,timeToResolution[timeframe],resolutionToCount[timeToResolution[timeframe]])
     
 def getStockQuote(symbol)->dict:
     """get current quote of stock
@@ -30,63 +30,65 @@ def getStockQuote(symbol)->dict:
     """
     return SM.getQuote(symbol)
 
-def getCandle(symbol,resolution='D')->dict:
+def getCandle(symbol,timeframe='Y')->dict:
     """general getcandle, decides where to take the candle from
     
     Arguments:
         symbol {str} -- stock symbol(eg:AAPL)
     
     Keyword Arguments:
-        resolution {str} -- resolution of checks (default: {'D'})
+        timeframe {str} -- the timeframe of the candle (default: {'Y'})
     
     Returns:
         dict -- candle
     """
-    #one of the options in DB
-    if resolution in resolutionToTime.keys():
-        #updated DB
-        if DM.updated():
-            return getDBCandle()
-        else:
-            #not updated,update and get from stock manger
-            return updateDBFromSM(symbol,resolution)
-    else:
-        #not a regular DB option, get from stock manager
-        return getStockCandle(symbol,resolution,resolutionToCount[resolution])
+    # #one of the options in DB
+    # if timeframe in timeToResolution.keys():
+    #     #updated DB
+    #     if DM.updated():
+    #         return getDBCandle()
+    #     else:
+    #         #not updated,update and get from stock manger
+    #         return updateDBFromSM(symbol,resolution)
+    # else:
+    #     #not a regular DB option, get from stock manager
 
-def getDBCandle(symbol,resolution='D')->dict:
+    #Currently just give the candle from the API, due to database slowdowns
+    return getStockCandle(symbol,timeframe)
+
+def getDBCandle(symbol,timeframe='Y')->dict:
     """get candle from DB
     
     Arguments:
         symbol {str} -- stock symbol(eg:AAPL)
     
     Keyword Arguments:
-        resolution {str} -- resolution of checks (default: {'D'})
+        timeframe {str} -- the timeframe of the candle (default: {'Y'})
     
     Returns:
         dict -- candle
     """
-    oCandle = DM.getData(symbol,resolution)
-    return dict(oCandle)
+    return DM.getData(symbol,timeframe)
 
 #TODO make function threaded
-def updateDBFromSM(symbol,resolution='D')->dict:
+def updateDBFromSM(symbol,timeframe='Y')->dict:
     """get candle from SM and store to DB
     
     Arguments:
         symbol {str} -- stock symbol(eg:AAPL)
     
     Keyword Arguments:
-        resolution {str} -- resolution of checks (default: {'D'})
+        timeframe {str} -- the timeframe of the candle (default: {'Y'})
     
     Returns:
         dict -- candle
     """
-    oCandle=SM.getCandle(symbol,resolution,resolutionToCount[resolution])
+    oCandle=getStockCandle(symbol, timeframe)
+    oCandle["timeframe"] = timeframe
     #make threaded
-    DM.storeData(oCandle,symbol,resolution)
+    DM.storeData(symbol, oCandle)
     #copy dictionary
-    return dict(oCandle)
+    return oCandle
 
 
 def main():
