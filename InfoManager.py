@@ -6,6 +6,34 @@ import threading
 
 timeToResolution={'Y':'D','M':'D','W':30}
 timeToCount={'Y':365,"M":30,"W":336}
+
+DEBUG = True
+
+def candleStockAPIState(symbol, timeframe):
+    if DEBUG:
+        print("{} : Entered stock state".format(symbol))
+    stockData = getStockCandle(symbol,timeframe)
+    #make sure that the data is not empty
+    if len(stockData.keys()) == 0:
+        return dict()
+    #Update the local storage
+    updateLMfromData(stockData, symbol, timeframe)
+    #Update the database
+    updateDBFromData(stockData, symbol, timeframe)
+    return stockData
+
+def candleLocalStorageState(symbol, timeframe):
+    if DEBUG:
+        print("{} : Entered local state".format(symbol))
+    return LM.getData(symbol, "candle", timeframe)
+
+def candleDatabaseState(symbol, timeframe):
+    if DEBUG:
+        print("{} : Entered database state".format(symbol))
+    return getDBCandle(symbol, timeframe)
+
+candleStateOrder = [candleLocalStorageState, candleStockAPIState, candleDatabaseState]
+
     
 def getStockCandle(symbol,timeframe='Y')->dict:
     """get candle from SM
@@ -43,29 +71,16 @@ def getCandle(symbol,timeframe='Y', forceAPI=False)->dict:
     
     Returns:
         dict -- candle
-    """
-    #TODO - add database switching
-    
+    """    
     if forceAPI:
         return getStockCandle(symbol, timeframe)
 
-    #Get the locally stored data
-    localData = LM.getData(symbol, "candle", timeframe)
-    #If the data searched for is not in the local storage, put it there from the API
-    if len(localData.keys()) == 0:
-        stockData = getStockCandle(symbol,timeframe)
-        #Make sure the data from the API is not empty (which could happen in case of an error or an API overload)
-        if len(stockData.keys()) == 0:
-            #Get Data from the database
-            databaseData = getDBCandle(symbol, timeframe)
-            return databaseData
-        #Put the timeframe into the data
-        updateLMfromData(stockData, symbol, timeframe)
-        #Update the database
-        updateDBFromData(stockData, symbol, timeframe)
-        return stockData
-    else:
-        return localData
+
+    for state in candleStateOrder:
+        data = state(symbol, timeframe)
+        if len(data.keys()) != 0:
+            return data
+
 
 def getDBCandle(symbol,timeframe='Y')->dict:
     """get candle from DB
