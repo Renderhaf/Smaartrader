@@ -1,6 +1,8 @@
 import StockManager as SM
 import DatabaseManager as DM
 import LocalDataManager as LM
+import DataValidator as DV
+import threading
 
 timeToResolution={'Y':'D','M':'D','W':30}
 timeToCount={'Y':365,"M":30,"W":336}
@@ -46,14 +48,21 @@ def getCandle(symbol,timeframe='Y', forceAPI=False)->dict:
     
     if forceAPI:
         return getStockCandle(symbol, timeframe)
+
     #Get the locally stored data
     localData = LM.getData(symbol, "candle", timeframe)
     #If the data searched for is not in the local storage, put it there from the API
     if len(localData.keys()) == 0:
         stockData = getStockCandle(symbol,timeframe)
+        #Make sure the data from the API is not empty (which could happen in case of an error or an API overload)
+        if len(stockData.keys()) == 0:
+            #Get Data from the database
+            databaseData = getDBCandle(symbol, timeframe)
+            return databaseData
         #Put the timeframe into the data
-        stockData["timeframe"] = timeframe
-        LM.putData(symbol, "candle", stockData)
+        updateLMfromData(stockData, symbol, timeframe)
+        #Update the database
+        updateDBFromData(stockData, symbol, timeframe)
         return stockData
     else:
         return localData
@@ -72,26 +81,36 @@ def getDBCandle(symbol,timeframe='Y')->dict:
     """
     return DM.getData(symbol,timeframe)
 
-#TODO make function threaded
-def updateDBFromSM(symbol,timeframe='Y')->dict:
+def updateLMfromData(data, symbol, timeframe='Y')->None:
+    """this function updated the local storage from data given
+    
+    Arguments:
+        data {dict} -- the data to be stored
+        symbol {str} -- stock symbol
+    
+    Keyword Arguments:
+        timeframe {str} -- the timeframe of the candle (default: {'Y'})
+    """
+    data["timeframe"] = timeframe
+    LM.putData(symbol, "candle", data)
+
+def updateDBFromData(data, symbol,timeframe='Y')->None:
     """get candle from SM and store to DB
     
     Arguments:
+        data {dict} -- the data to be uploaded
         symbol {str} -- stock symbol(eg:AAPL)
     
     Keyword Arguments:
         timeframe {str} -- the timeframe of the candle (default: {'Y'})
     
     Returns:
-        dict -- candle
+        None
     """
-    oCandle=getStockCandle(symbol, timeframe)
-    oCandle["timeframe"] = timeframe
-    #make threaded
-    DM.storeData(symbol, oCandle)
-    #copy dictionary
-    return oCandle
-
+    data["timeframe"] = timeframe
+    DV.putExpirationDate(data)
+    #start a new thread for uploading the info to the database
+    threading.Thread(target=DM.storeData, args=[symbol,data]).start()
 
 def main():
     print(getCandle('AAPL'))
