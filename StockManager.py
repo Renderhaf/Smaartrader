@@ -58,6 +58,8 @@ def getQuote(symbol)->dict:
     fixedDict['difference_percentage']= round(100*fixedDict['difference']/req['pc'],2)
     return fixedDict
 
+#TODO - make stock api calls return {} when too many calls or broken API
+
 def getRawCandle(symbol,resolution='D',count=365)->dict:
     """get candle of stock-uneditted
     
@@ -71,8 +73,11 @@ def getRawCandle(symbol,resolution='D',count=365)->dict:
         dict -- candle
     """
     requestExtension=('symbol={}&resolution={}&count={}').format(symbol,resolution,count)
-    req = requests.get(request.format('stock/candle',requestExtension))
-    data = req.json()
+    req = requests.get(request.format('stock/cndle',requestExtension))
+    try:
+        data = req.json()
+    except json.decoder.JSONDecodeError:
+        return dict()
     return data
 
 def getCandle(symbol,resolution='D',count=365)->dict:
@@ -88,6 +93,8 @@ def getCandle(symbol,resolution='D',count=365)->dict:
         dict -- candle
     """
     req=getRawCandle(symbol,resolution,count)
+    if len(req.keys()) == 0:
+        return dict()
     #dict_keys(['c' closed, 'h' high, 'l' low, 'o' open, 's' ok or no data, 't timestamp', 'v' volume])
     req['dt']=list()
     req['df']=list()
