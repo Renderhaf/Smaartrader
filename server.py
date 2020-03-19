@@ -6,7 +6,7 @@ from flask import Flask, render_template, request
 import json
 import time
 
-import InfoManager as IM
+import StockInfoPackage.InfoManager as IM
 
 app = Flask(__name__)
 

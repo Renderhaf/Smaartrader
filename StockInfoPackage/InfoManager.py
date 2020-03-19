@@ -1,7 +1,7 @@
-import StockManager as SM
-import DatabaseManager as DM
-import LocalDataManager as LM
-import DataValidator as DV
+import StockInfoPackage.StockManager as SM
+import StockInfoPackage.DatabaseManager as DM
+import StockInfoPackage.LocalDataManager as LM
+import StockInfoPackage.DataValidator as DV
 import threading
 
 timeToResolution={'Y':'D','M':'D','W':30}
