@@ -78,7 +78,7 @@ def getRawCandle(symbol,resolution='D',count=365)->dict:
 
     #Remove old calls from the call list
     currentTime = time.time()
-    lastCallTimes = list(filter(lambda callTime : currentTime - callTime < 60 ,lastCallTimes))
+    lastCallTimes = [ct for ct in lastCallTimes if currentTime - ct < 60]
 
     #Dont call the API if we reached the max API calls per minute
     if len(lastCallTimes) >= maxAPICallsPerMinute:
