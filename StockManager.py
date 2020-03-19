@@ -56,7 +56,7 @@ def getQuote(symbol)->dict:
     fixedDict['previous_close']=req['pc']
     fixedDict['time_stamp']=req['t']
     fixedDict['difference']= round(req['c']-req['pc'],2)
-    fixedDict['difference_percentage']= round(100*fixedDict['difference']/req['pc'],2)
+    fixedDict['difference_percentage']= (round(100*fixedDict['difference']/req['pc'],2) if req['pc']>0 else 0)
     return fixedDict
 
 def getRawCandle(symbol,resolution='D',count=365)->dict:
@@ -131,14 +131,13 @@ def getCandle(symbol,resolution='D',count=365)->dict:
         
         req['df'].append(round(req['c'][i]-req['c'][i-1],2) if i>0 else 0)
         #day's difference percentage
-        req['dfp'].append(round(100*req['df'][i]/req['c'][i-1],2) if i>0 else 0)
+        req['dfp'].append(round(100*req['df'][i]/req['c'][i-1],2) if (i>0 and req['c'][i-1]>0) else 0)
     return req
 
 
 def main():
-    #printGraph('AAPL','D',30)
-    print(getCandle('AAPL','D',30)['dt'] )
-    #print(getQuote("AAPL"))
+    printGraph('AAPL','D',30)
+    print(getQuote("AAPL"))
 
 """print stocks data graph
 """
