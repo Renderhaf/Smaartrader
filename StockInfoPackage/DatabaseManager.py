@@ -1,5 +1,5 @@
 import pymongo
-import StockInfoPackage.DataValidator as DV
+import DataValidator as DV
 
 client = pymongo.MongoClient("mongodb+srv://StockManager:Manage123@maincluster-zlnck.mongodb.net/test?retryWrites=true&w=majority")
 database = client.get_database("StocksInfo")

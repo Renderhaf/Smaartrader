@@ -5,8 +5,12 @@ import time
 from flask import Flask, render_template, request
 import json
 import time
+import sys
 
-import StockInfoPackage.InfoManager as IM
+#This adds the StockInfoPackage package to the path, so we can import from it
+sys.path.insert(1, './StockInfoPackage/')
+
+import InfoManager as IM
 
 app = Flask(__name__)
 

@@ -1,5 +1,5 @@
 import json
-import StockInfoPackage.DataValidator as DV
+import DataValidator as DV
 import time
 
 
