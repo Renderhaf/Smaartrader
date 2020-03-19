@@ -3,17 +3,18 @@ import json
 import time
 import matplotlib.pyplot as plt
 import numpy as np
+import time
 
-
-
-#static 
-file=open("APIKEYS.json", "r")
+file = open("APIKEYS.json", "r")
 data = json.loads(file.read())
 key = data["Finnhub"]
 
 request = "https://finnhub.io/api/v1/{}?{}&token=" + key
 backLoggingAttempts = 5
 months={'Jan':'01','Feb':'02','Mar':'03','Apr':'04','May':'05','Jun':'06','Jul':'07','Aug':'08','Sep':'09','Oct':'10','Nov':'11','Dec':'12'}
+
+maxAPICallsPerMinute = 45
+lastCallTimes = []
 
 #delete help variables
 file.close()
@@ -70,9 +71,30 @@ def getRawCandle(symbol,resolution='D',count=365)->dict:
     Returns:
         dict -- candle
     """
+
+    #For now, this is here because we need to assign the filtered value of the list to itself
+    #TODO - find a way to do this without a global var
+    global lastCallTimes
+
+    #Remove old calls from the call list
+    currentTime = time.time()
+    lastCallTimes = [ct for ct in lastCallTimes if currentTime - ct < 60]
+
+    #Dont call the API if we reached the max API calls per minute
+    if len(lastCallTimes) >= maxAPICallsPerMinute:
+        return dict()
+
     requestExtension=('symbol={}&resolution={}&count={}').format(symbol,resolution,count)
     req = requests.get(request.format('stock/candle',requestExtension))
-    data = req.json()
+
+    #As soon as we call the API, put the time into the call list
+    lastCallTimes.append(time.time())
+
+    #Read the request
+    try:
+        data = req.json()
+    except json.decoder.JSONDecodeError:
+        return dict()
     return data
 
 def getCandle(symbol,resolution='D',count=365)->dict:
@@ -88,6 +110,12 @@ def getCandle(symbol,resolution='D',count=365)->dict:
         dict -- candle
     """
     req=getRawCandle(symbol,resolution,count)
+
+    #Make sure data is not empty
+    if len(req.keys()) == 0:
+        return dict()
+
+    #format the dictionary and add custom values
     #dict_keys(['c' closed, 'h' high, 'l' low, 'o' open, 's' ok or no data, 't timestamp', 'v' volume])
     req['dt']=list()
     req['df']=list()

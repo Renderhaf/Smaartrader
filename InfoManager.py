@@ -1,9 +1,39 @@
 import StockManager as SM
 import DatabaseManager as DM
 import LocalDataManager as LM
+import DataValidator as DV
+import threading
 
 timeToResolution={'Y':'D','M':'D','W':30}
 timeToCount={'Y':365,"M":30,"W":336}
+
+DEBUG = True
+
+def candleStockAPIState(symbol, timeframe):
+    if DEBUG:
+        print("{} : Entered stock state".format(symbol))
+    stockData = getStockCandle(symbol,timeframe)
+    #make sure that the data is not empty
+    if len(stockData.keys()) == 0:
+        return dict()
+    #Update the local storage
+    updateLMfromData(stockData, symbol, timeframe)
+    #Update the database
+    updateDBFromData(stockData, symbol, timeframe)
+    return stockData
+
+def candleLocalStorageState(symbol, timeframe):
+    if DEBUG:
+        print("{} : Entered local state".format(symbol))
+    return LM.getData(symbol, "candle", timeframe)
+
+def candleDatabaseState(symbol, timeframe):
+    if DEBUG:
+        print("{} : Entered database state".format(symbol))
+    return getDBCandle(symbol, timeframe)
+
+candleStateOrder = [candleLocalStorageState, candleStockAPIState, candleDatabaseState]
+
     
 def getStockCandle(symbol,timeframe='Y')->dict:
     """get candle from SM
@@ -41,22 +71,16 @@ def getCandle(symbol,timeframe='Y', forceAPI=False)->dict:
     
     Returns:
         dict -- candle
-    """
-    #TODO - add database switching
-    
+    """    
     if forceAPI:
         return getStockCandle(symbol, timeframe)
-    #Get the locally stored data
-    localData = LM.getData(symbol, "candle", timeframe)
-    #If the data searched for is not in the local storage, put it there from the API
-    if len(localData.keys()) == 0:
-        stockData = getStockCandle(symbol,timeframe)
-        #Put the timeframe into the data
-        stockData["timeframe"] = timeframe
-        LM.putData(symbol, "candle", stockData)
-        return stockData
-    else:
-        return localData
+
+
+    for state in candleStateOrder:
+        data = state(symbol, timeframe)
+        if len(data.keys()) != 0:
+            return data
+
 
 def getDBCandle(symbol,timeframe='Y')->dict:
     """get candle from DB
@@ -72,26 +96,36 @@ def getDBCandle(symbol,timeframe='Y')->dict:
     """
     return DM.getData(symbol,timeframe)
 
-#TODO make function threaded
-def updateDBFromSM(symbol,timeframe='Y')->dict:
+def updateLMfromData(data, symbol, timeframe='Y')->None:
+    """this function updated the local storage from data given
+    
+    Arguments:
+        data {dict} -- the data to be stored
+        symbol {str} -- stock symbol
+    
+    Keyword Arguments:
+        timeframe {str} -- the timeframe of the candle (default: {'Y'})
+    """
+    data["timeframe"] = timeframe
+    LM.putData(symbol, "candle", data)
+
+def updateDBFromData(data, symbol,timeframe='Y')->None:
     """get candle from SM and store to DB
     
     Arguments:
+        data {dict} -- the data to be uploaded
         symbol {str} -- stock symbol(eg:AAPL)
     
     Keyword Arguments:
         timeframe {str} -- the timeframe of the candle (default: {'Y'})
     
     Returns:
-        dict -- candle
+        None
     """
-    oCandle=getStockCandle(symbol, timeframe)
-    oCandle["timeframe"] = timeframe
-    #make threaded
-    DM.storeData(symbol, oCandle)
-    #copy dictionary
-    return oCandle
-
+    data["timeframe"] = timeframe
+    DV.putExpirationDate(data)
+    #start a new thread for uploading the info to the database
+    threading.Thread(target=DM.storeData, args=[symbol,data]).start()
 
 def main():
     print(getCandle('AAPL'))
