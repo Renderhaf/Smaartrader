@@ -1,6 +1,10 @@
 import unittest
 import requests
 import json
+import sys
+
+sys.path.insert(1, './StockInfoPackage/')
+
 import StockManager as SM
 import DataValidator as DV
 import DatabaseManager as DM
