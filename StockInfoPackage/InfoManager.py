@@ -4,8 +4,8 @@ import LocalDataManager as LM
 import DataValidator as DV
 import threading
 
-timeToResolution={'Y':'D','M':'D','W':30}
-timeToCount={'Y':365,"M":30,"W":336}
+timeToResolution={'Y':'D','M':'D','W':30,'D':5}
+timeToCount={'Y':365,'M':30,'W':336,'D':288}
 
 DEBUG = True
 

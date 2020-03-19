@@ -46,10 +46,10 @@
                     <div class="col-md-4 p-3 col-sm-12">
                         <div class = "p-3 zoomGraph" style="border: 1px solid black;">
                             <div class="row">
-                                <div class="col-md-3 col-sm-12">
+                                <div class="col-sm-4 col-md-3">
                                     <span>{{stock}}</span> <span id="{{stock}}DiffArrow"></span>
                                 </div>
-                                <div class="col-2">
+                                <div class="col-3">
                                     <span id="{{stock}}Price"></span>
                                 </div>
                                 <div class="col-2">
@@ -58,14 +58,17 @@
                                 <div class="col-2">
                                     <span id="{{stock}}percent"></span>
                                 </div>
-                                <div class="col-sm-3 d-md-none d-xs-none d-sm-block">
+                                <div class="col-sm-2 d-md-none d-xs-none d-sm-block">
                                     <!-- Filler Div -->
                                 </div>
-                                <div class="col-3">
+                            </div>
+                            <div class="row">
+                                <div class="col">
                                     <div class="btn-group" data="{{stock}}">
                                         <div class="btn btn-primary" onclick="{{stock}}selectTime(this)">Y</div>
                                         <div class="btn btn-secondary" onclick="{{stock}}selectTime(this)">M</div>
                                         <div class="btn btn-secondary" onclick="{{stock}}selectTime(this)">W</div>
+                                        <div class="btn btn-secondary" onclick="{{stock}}selectTime(this)">D</div>
                                     </div>
                                 </div>
                                 <script>
@@ -77,23 +80,26 @@
                                     //make an HTTP post request to the server, asking for the candle and quote data
                                     $.post("/", {"type":"quote+candle", "name":"{{stock}}", "time": "Y"}, function(stockData, succsses){
                                         let stockPrice = stockData["current_price"]
-                                        document.getElementById("{{stock}}Price").innerHTML = stockPrice + "$"
+                                        document.getElementById("{{stock}}Price").innerHTML = stockPrice + "$  "
 
                                         let stockpercent = stockData["difference_percentage"]
-                                        document.getElementById("{{stock}}percent").innerHTML = stockpercent + "%"
 
                                         let stockDiff = stockData["difference"]
                                         //▲, ▼
                                         if (parseFloat(stockDiff) > 0){
+                                            document.getElementById("{{stock}}percent").innerHTML ="  +"+ stockpercent + "%"
                                             document.getElementById("{{stock}}DiffArrow").innerHTML = "▲"
                                             document.getElementById("{{stock}}DiffArrow").style = "color: green"
+                                            document.getElementById("{{stock}}Diff").innerHTML ="  +"+stockDiff
                                         } else {
+                                            document.getElementById("{{stock}}percent").innerHTML ="  "+ stockpercent + "%"
                                             document.getElementById("{{stock}}DiffArrow").innerHTML = "▼"
                                             document.getElementById("{{stock}}DiffArrow").style = "color: red"
+                                            document.getElementById("{{stock}}Diff").innerHTML ="  "+stockDiff
                                         }
-                                        document.getElementById("{{stock}}Diff").innerHTML = stockDiff
+                                        
 
-                                        //Change the graph colors based on the diff from the quote 
+                                        //Change the graph colors based on the diff from the quote
                                         if (parseFloat(stockDiff) > 0){
                                             {{stock}}BorderColor = 'rgba(21, 255, 132, 1)';
                                             {{stock}}BackColor = 'rgba(21, 255, 132, 0.2)';
