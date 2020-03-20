@@ -41,8 +41,12 @@
                         <div class = "p-3 zoomGraph" style="border: 1px solid black;">
                             <div class="row">
                                 <!-- d-flex justify-content-center justify-content-md-left pb-3 pb-md-0 mb-3 mb-md-0 nametag -->
-                                <div class="col-2 pr-0">
+                                <div class="col pr-0">
                                     <span>{{stock}}</span> <span id="{{stock}}DiffArrow"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3 col-md-2 col-lg-1">
                                 </div>
                                 <div class="col-2">
                                     <span id="{{stock}}Price"></span>
@@ -54,7 +58,7 @@
                                     <span id="{{stock}}percent"></span>
                                 </div>
                                
-                                <div class="col-3 mr-0 pr-0 col-md-4 pl-3">
+                                <div class="col-3 mr-0 pr-0 col-lg-4 pl-3">
                                     <div class="btn-group" data="{{stock}}">
                                         <div class="btn btn-primary" onclick="{{stock}}selectTime(this)">Y</div>
                                         <div class="btn btn-secondary" onclick="{{stock}}selectTime(this)">M</div>
