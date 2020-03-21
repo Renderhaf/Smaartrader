@@ -7,7 +7,7 @@ M - Monthly Candle
 W - Weekly Candle
 Q - Quote
 """
-spoilTimes = {"Y": 30, "M": 30, "W": 10, "Q": 0.5}
+spoilTimes = {"Y": 30, "M": 30, "W": 10, "Q": 0.5,'D':0.5}
 expirationDateKey = "expirationDate"
 spoilTimeConversion = 3600
 
