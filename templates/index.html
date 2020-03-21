@@ -21,12 +21,6 @@
                 transition: all 0.5s ease-in-out;
             } 
             
-            /*
-            .zoomGraph:hover{
-                transform: scale(1.02);
-                transition: all 0.5s ease-in-out;
-            }
-            */
         </style>
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -43,11 +37,15 @@
             <!-- Repeates for every stock -->
             {% if stocks %}
                 {% for stock in stocks %}
-                    <div class="col-md-4 p-3 col-sm-12">
+                    <div class="col-md-6 col-lg-4 p-3 col-sm-12">
                         <div class = "p-3 zoomGraph" style="border: 1px solid black;">
                             <div class="row">
-                                <div class="col-md-3 col-sm-12">
-                                    <span>{{stock}}</span> <span id="{{stock}}DiffArrow"></span>
+                                <!-- d-flex justify-content-center justify-content-md-left pb-3 pb-md-0 mb-3 mb-md-0 nametag -->
+                                <div class="col-2 pr-0 col-lg-12">
+                                    <p style="white-space: nowrap;"><span>{{stock}}</span> <span id="{{stock}}DiffArrow"></span></p>
+                                </div>
+                                <div class="col-2 d-md-block d-none">
+                                    <!--Filler Div-->
                                 </div>
                                 <div class="col-2">
                                     <span id="{{stock}}Price"></span>
@@ -58,16 +56,17 @@
                                 <div class="col-2">
                                     <span id="{{stock}}percent"></span>
                                 </div>
-                                <div class="col-sm-3 d-md-none d-xs-none d-sm-block">
-                                    <!-- Filler Div -->
-                                </div>
-                                <div class="col-3">
+                               
+                                <div class="col-3 mr-0 pr-0 col-md-4 pl-3">
                                     <div class="btn-group" data="{{stock}}">
                                         <div class="btn btn-primary" onclick="{{stock}}selectTime(this)">Y</div>
                                         <div class="btn btn-secondary" onclick="{{stock}}selectTime(this)">M</div>
-                                        <div class="btn btn-secondary" onclick="{{stock}}selectTime(this)">W</div>
+                                        <div class="btn btn-secondary d-none d-lg-block" onclick="{{stock}}selectTime(this)">W</div>
+                                        <div class="btn btn-secondary" onclick="{{stock}}selectTime(this)">D</div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="row">
                                 <script>
                                     var {{stock}}BorderColor = "";
                                     var {{stock}}BackColor = "";
@@ -76,24 +75,27 @@
                                     
                                     //make an HTTP post request to the server, asking for the candle and quote data
                                     $.post("/", {"type":"quote+candle", "name":"{{stock}}", "time": "Y"}, function(stockData, succsses){
-                                        let stockPrice = stockData["current_price"]
-                                        document.getElementById("{{stock}}Price").innerHTML = stockPrice + "$"
+                                        let stockPrice = stockData["current_price"].toString().slice(0,-1);
+                                        document.getElementById("{{stock}}Price").innerHTML = stockPrice + "$  "
 
-                                        let stockpercent = stockData["difference_percentage"]
-                                        document.getElementById("{{stock}}percent").innerHTML = stockpercent + "%"
+                                        let stockpercent = stockData["difference_percentage"].toString().slice(0,-1);
 
-                                        let stockDiff = stockData["difference"]
+                                        let stockDiff = stockData["difference"].toString().slice(0,-1);
                                         //▲, ▼
                                         if (parseFloat(stockDiff) > 0){
+                                            document.getElementById("{{stock}}percent").innerHTML ="  +" + stockpercent + "%"
                                             document.getElementById("{{stock}}DiffArrow").innerHTML = "▲"
                                             document.getElementById("{{stock}}DiffArrow").style = "color: green"
+                                            document.getElementById("{{stock}}Diff").innerHTML ="  +"+stockDiff
                                         } else {
+                                            document.getElementById("{{stock}}percent").innerHTML ="  "+ stockpercent + "%"
                                             document.getElementById("{{stock}}DiffArrow").innerHTML = "▼"
                                             document.getElementById("{{stock}}DiffArrow").style = "color: red"
+                                            document.getElementById("{{stock}}Diff").innerHTML ="  "+stockDiff
                                         }
-                                        document.getElementById("{{stock}}Diff").innerHTML = stockDiff
+                                        
 
-                                        //Change the graph colors based on the diff from the quote 
+                                        //Change the graph colors based on the diff from the quote
                                         if (parseFloat(stockDiff) > 0){
                                             {{stock}}BorderColor = 'rgba(21, 255, 132, 1)';
                                             {{stock}}BackColor = 'rgba(21, 255, 132, 0.2)';
