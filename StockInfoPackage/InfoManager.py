@@ -6,13 +6,28 @@ import threading
 
 timeToResolution={'Y':'D','M':'D','W':30,'D':5}
 timeToCount={'Y':365,'M':30,'W':336,'D':288}
+regressionLimit = 3
 
 DEBUG = True
 
 def candleStockAPIState(symbol, timeframe):
     if DEBUG:
         print("{} : Entered stock state".format(symbol))
-    stockData = getStockCandle(symbol,timeframe)
+    stockData = getStockCandle(symbol,timeframe)  
+
+    #This is here so that when given empty data, the quary will go back upto regressionLimit (currently 3) days
+    for i in range(regressionLimit):
+        #No data in the candle
+        if stockData["s"] == "no_data":
+            #Check again
+            stockData = getStockCandle(symbol, timeframe, timeMul=i+1)
+        else:
+            break
+    #The for looped for regressionLimit times, and did not find anything
+    else:
+        print("Shit. This wasn't supposed to happen")
+        return {"c": [], "t": []}
+
     #make sure that the data is not empty
     if len(stockData.keys()) == 0:
         return dict()
@@ -35,19 +50,20 @@ def candleDatabaseState(symbol, timeframe):
 candleStateOrder = [candleLocalStorageState, candleStockAPIState, candleDatabaseState]
 
     
-def getStockCandle(symbol,timeframe='Y')->dict:
+def getStockCandle(symbol,timeframe='Y', timeMul=0)->dict:
     """get candle from SM
     
     Arguments:
         symbol {str} -- stock symbol(eg:AAPL)
     
     Keyword Arguments:
-        resolution {str} -- resolution of checks (default: {'D'})
+        timeframe {str} -- the timeframe of the candle (default: {'Y'})
+        timeMul {int} -- the amount of counts to be added
     
     Returns:
         dict -- candle
     """
-    return SM.getCandle(symbol,timeToResolution[timeframe],timeToCount[timeframe])
+    return SM.getCandle(symbol,timeToResolution[timeframe],timeToCount[timeframe] + timeMul*timeToCount[timeframe])
     
 def getStockQuote(symbol)->dict:
     """get current quote of stock
@@ -72,6 +88,7 @@ def getCandle(symbol,timeframe='Y', forceAPI=False)->dict:
     Returns:
         dict -- candle
     """    
+
     if forceAPI:
         return getStockCandle(symbol, timeframe)
 
@@ -128,7 +145,7 @@ def updateDBFromData(data, symbol,timeframe='Y')->None:
     threading.Thread(target=DM.storeData, args=[symbol,data]).start()
 
 def main():
-    print(getCandle('AAPL'))
+    print(getCandle('AAPL', 'D'))
 
 if __name__ == "__main__":
     main()
