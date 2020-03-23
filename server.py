@@ -24,11 +24,21 @@ with open("companies.json", "r") as file:
 def index():
     if request.method == "POST":
         if request.form["type"] == "quote+candle":
-            data = IM.getStockQuote(request.form["name"])
-            candleData = IM.getCandle(request.form["name"], request.form["time"])
-            data["prices"] = candleData["c"]
-            data["dates"] = [time.ctime(t) for t in candleData["t"]]
-            return data
+            if request.form["isMulti"] == 'true':
+                symbolData = {}
+                for symbol in json.loads(request.form["names"]):
+                    data = IM.getStockQuote(symbol)
+                    candleData = IM.getCandle(symbol, request.form["time"])
+                    data["prices"] = candleData["c"]
+                    data["dates"] = [time.ctime(t) for t in candleData["t"]]
+                    symbolData[symbol] = data
+                return symbolData
+            else:
+                data = IM.getStockQuote(request.form["name"])
+                candleData = IM.getCandle(request.form["name"], request.form["time"])
+                data["prices"] = candleData["c"]
+                data["dates"] = [time.ctime(t) for t in candleData["t"]]
+                return data
 
         if request.form["type"] == "candle":
             stockData = IM.getCandle(request.form["name"], request.form["time"])
@@ -42,8 +52,11 @@ def index():
 
 
     else: 
-
-        return render_template("index.html", stocks = companies)
+        viewedStocks = companies
+        if False:
+            return render_template("oneRequestIndex.html", stocks = viewedStocks)
+        else:
+            return render_template("threadedRequestIndex.html", stocks = viewedStocks)
 
 if __name__ == "__main__":
     port = os.environ.get('PORT') or 5000
