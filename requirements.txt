@@ -1,2 +1,4 @@
-json
 requests
+flask
+numpy
+matplotlib
