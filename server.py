@@ -53,7 +53,7 @@ def index():
 
     else: 
         viewedStocks = companies
-        if False:
+        if len(viewedStocks) > 10:
             return render_template("oneRequestIndex.html", stocks = viewedStocks)
         else:
             return render_template("threadedRequestIndex.html", stocks = viewedStocks)

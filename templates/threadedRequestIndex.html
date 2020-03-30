@@ -35,6 +35,11 @@
 
         <div class="row m-2">
             <!-- Repeates for every stock -->
+            <script>
+                var delayTime = 0;
+                //Time time difference between each request
+                var delayStep = 250;
+            </script>
             {% if stocks %}
                 {% for stock in stocks %}
                     <div class="col-md-6 col-lg-4 p-3 col-sm-12">
@@ -45,7 +50,7 @@
                                     <p style="white-space: nowrap;"><span>{{stock}}</span> <span id="{{stock}}DiffArrow"></span></p>
                                 </div>
 
-                                <div class="col-2 d-md-block d-none">
+                                <div class="col-2 d-lg-block d-none">
                                     <!--Filler Div-->
                                 </div>
                                 <div class="col-2">
@@ -75,41 +80,46 @@
                                     var {{stock}}ctx;
                                     
                                     //make an HTTP post request to the server, asking for the candle and quote data
-                                    $.post("/", {"type":"quote+candle", "name":"{{stock}}", "time": "Y", "isMulti":false}, function(stockData, succsses){
-                                        let stockPrice = stockData["current_price"].toString().slice(0,-1);
-                                        document.getElementById("{{stock}}Price").innerHTML = stockPrice + "$  "
+                                    setTimeout( () => {
+                                        $.post("/", {"type":"quote+candle", "name":"{{stock}}", "time": "Y", "isMulti":false}, function(stockData, succsses){
+                                            let stockPrice = stockData["current_price"].toString().slice(0,-1);
+                                            document.getElementById("{{stock}}Price").innerHTML = stockPrice + "$  "
 
-                                        let stockpercent = stockData["difference_percentage"].toString().slice(0,-1);
+                                            let stockpercent = stockData["difference_percentage"].toString().slice(0,-1);
 
-                                        let stockDiff = stockData["difference"].toString().slice(0,-1);
-                                        //▲, ▼
-                                        if (parseFloat(stockDiff) > 0){
-                                            document.getElementById("{{stock}}percent").innerHTML ="  +" + stockpercent + "%"
-                                            document.getElementById("{{stock}}DiffArrow").innerHTML = "▲"
-                                            document.getElementById("{{stock}}DiffArrow").style = "color: green"
-                                            document.getElementById("{{stock}}Diff").innerHTML ="  +"+stockDiff
-                                        } else {
-                                            document.getElementById("{{stock}}percent").innerHTML ="  "+ stockpercent + "%"
-                                            document.getElementById("{{stock}}DiffArrow").innerHTML = "▼"
-                                            document.getElementById("{{stock}}DiffArrow").style = "color: red"
-                                            document.getElementById("{{stock}}Diff").innerHTML ="  "+stockDiff
-                                        }
-                                        
+                                            let stockDiff = stockData["difference"].toString().slice(0,-1);
+                                            //▲, ▼
+                                            if (parseFloat(stockDiff) > 0){
+                                                document.getElementById("{{stock}}percent").innerHTML ="  +" + stockpercent + "%"
+                                                document.getElementById("{{stock}}DiffArrow").innerHTML = "▲"
+                                                document.getElementById("{{stock}}DiffArrow").style = "color: green"
+                                                document.getElementById("{{stock}}Diff").innerHTML ="  +"+stockDiff
+                                            } else {
+                                                document.getElementById("{{stock}}percent").innerHTML ="  "+ stockpercent + "%"
+                                                document.getElementById("{{stock}}DiffArrow").innerHTML = "▼"
+                                                document.getElementById("{{stock}}DiffArrow").style = "color: red"
+                                                document.getElementById("{{stock}}Diff").innerHTML ="  "+stockDiff
+                                            }
+                                            
 
-                                        //Change the graph colors based on the diff from the quote
-                                        if (parseFloat(stockDiff) > 0){
-                                            {{stock}}BorderColor = 'rgba(21, 255, 132, 1)';
-                                            {{stock}}BackColor = 'rgba(21, 255, 132, 0.2)';
-                                        } else {
-                                            {{stock}}BorderColor = 'rgba(255, 99, 132, 1)';
-                                            {{stock}}BackColor = 'rgba(255, 99, 132, 0.2)';
-                                        }
-                                        
-                                        //Init the stock chart 
-                                        {{stock}}ctx = document.getElementById('{{stock}}-chart').getContext('2d');
-                                        {{stock}}Chart = startChart({{stock}}ctx, stockData["prices"], stockData["dates"], {{stock}}BackColor, {{stock}}BorderColor);
-                                        
-                                    })
+                                            //Change the graph colors based on the diff from the quote
+                                            if (parseFloat(stockDiff) > 0){
+                                                {{stock}}BorderColor = 'rgba(21, 255, 132, 1)';
+                                                {{stock}}BackColor = 'rgba(21, 255, 132, 0.2)';
+                                            } else {
+                                                {{stock}}BorderColor = 'rgba(255, 99, 132, 1)';
+                                                {{stock}}BackColor = 'rgba(255, 99, 132, 0.2)';
+                                            }
+                                            
+                                            //Init the stock chart 
+                                            {{stock}}ctx = document.getElementById('{{stock}}-chart').getContext('2d');
+                                            {{stock}}Chart = startChart({{stock}}ctx, stockData["prices"], stockData["dates"], {{stock}}BackColor, {{stock}}BorderColor);
+                                            
+                                        })}, delayTime
+                                    )
+                                    console.log(delayTime);
+                                    delayTime += delayStep;
+
 
                                     //A function that passes the jinja information to a normal javascript function
                                     function {{stock}}selectTime(btn){
