@@ -48,7 +48,7 @@ def candleDatabaseState(symbol, timeframe):
     return getDBCandle(symbol, timeframe)
 
 candleStateOrder = [candleLocalStorageState, candleStockAPIState, candleDatabaseState]
-
+candleStateOrder = [candleStockAPIState]
     
 def getStockCandle(symbol,timeframe='Y', timeMul=0)->dict:
     """get candle from SM
