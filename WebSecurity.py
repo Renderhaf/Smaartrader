@@ -16,7 +16,7 @@ def validatePOST(request: flask_request)->bool:
 
 def resetStorage()->None:
     with open(storeLocation, "w") as file:
-        file.write("")
+        file.write("{}")
 
 def storeToken(token:str)->None:
     storage = getSessionStorage()
@@ -33,7 +33,7 @@ def isSessionStored(sessionID: str)->bool:
     if sessionID in storage.keys():
         #Check expiration, and if expired, erase the sessionID
         if storage[sessionID]["expiration"] < currentTime:
-            del storage[sessionID]
+            storage.pop(sessionID)
             with open(storeLocation, "w") as file:
                 file.write(json.dumps(storage))
             return False
@@ -53,4 +53,4 @@ def getSessionStorage()->dict:
     return storage
 
 if __name__ == "__main__":
-    print(getSessionID())
+    print(getNewSessionID())
