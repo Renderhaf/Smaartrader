@@ -4,10 +4,9 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 import time
+import os
 
-file = open("APIKEYS.json", "r")
-data = json.loads(file.read())
-key = data["Finnhub"]
+key = os.getenv("FINNHUB_KEY")
 
 request = "https://finnhub.io/api/v1/{}?{}&token=" + key
 backLoggingAttempts = 5
@@ -15,12 +14,6 @@ months={'Jan':'01','Feb':'02','Mar':'03','Apr':'04','May':'05','Jun':'06','Jul':
 
 maxAPICallsPerMinute = 45
 lastCallTimes = []
-
-#delete help variables
-file.close()
-del data
-del key
-del file
 
 def getRawQuote( symbol) -> dict:
     """get current quote of stock-uneditted
@@ -32,7 +25,10 @@ def getRawQuote( symbol) -> dict:
         dict -- the quote
     """
     req = requests.get(request.format('quote','symbol='+symbol))
-    return req.json()
+    try:
+        return req.json()
+    except json.JSONDecodeError:
+        return dict()
 
 def getQuote(symbol)->dict:
     """get current quote of stock- editted
@@ -44,6 +40,10 @@ def getQuote(symbol)->dict:
         dict -- the quote
     """
     req = getRawQuote(symbol)
+
+    if len(req.keys()) == 0:
+        return dict()
+
     fixedDict=dict()
     fixedDict["stockSymbol"]=symbol
     readableSplittedTime=time.ctime(req['t']).split()

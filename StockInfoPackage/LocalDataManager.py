@@ -5,7 +5,7 @@ import time
 
 documentName = "localStorage.json"
 
-def putData(symbol: str, datatype: str, data: dict,quality:str='low') -> None:   
+def putData(symbol: str, datatype: str, data: dict, quality:str='high') -> None:   
     """
     Puts Data in the local storage if its not already there
     """
@@ -44,7 +44,7 @@ def putData(symbol: str, datatype: str, data: dict,quality:str='low') -> None:
         currentData[symbol].append(newdata)
         file.write(json.dumps(currentData))
 
-def getData(symbol, datatype: str, timeframe: str,quality:str='low') -> dict:
+def getData(symbol, datatype: str, timeframe: str,quality:str='high') -> dict:
     """
     Gets data from the local storage\n
     If the data does not exist in the local storage, the function will return {}

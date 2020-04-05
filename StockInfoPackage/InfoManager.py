@@ -15,7 +15,7 @@ DEBUG = True
 
 default_quality='high'
 
-def candleStockAPIState(symbol, timeframe,quality):
+def candleStockAPIState(symbol, timeframe, quality):
     if DEBUG:
         print("{} : Entered stock state".format(symbol))
     stockData = getStockCandle(symbol,timeframe,quality)  
@@ -43,7 +43,7 @@ def candleStockAPIState(symbol, timeframe,quality):
     
     return stockData
 
-def candleLocalStorageState(symbol, timeframe,quality=default_quality):
+def candleLocalStorageState(symbol, timeframe, quality=default_quality):
     if DEBUG:
         print("{} : Entered local state".format(symbol))
     return LM.getData(symbol, "candle", timeframe,quality)
@@ -56,7 +56,7 @@ def candleDatabaseState(symbol, timeframe,quality=default_quality):
 candleStateOrder = [candleLocalStorageState, candleStockAPIState, candleDatabaseState]
 
     
-def getStockCandle(symbol,timeframe='Y',quality=default_quality, timeMul=0)->dict:
+def getStockCandle(symbol,timeframe='Y', quality=default_quality, timeMul=0)->dict:
     """get candle from SM
     
     Arguments:
@@ -73,7 +73,7 @@ def getStockCandle(symbol,timeframe='Y',quality=default_quality, timeMul=0)->dic
         return SM.getCandle(symbol,qualities[quality]['TTR'][timeframe],(1 + timeMul)*qualities[quality]['TTC'][timeframe])
     else:
         if DEBUG:
-            print('not in qualities options')
+            print('Not a quality')
         return SM.getCandle(symbol,qualities[default_quality]['TTR'][timeframe],(1 + timeMul)*qualities[default_quality]['TTC'][timeframe])
 
 def getStockQuote(symbol)->dict:
@@ -87,7 +87,7 @@ def getStockQuote(symbol)->dict:
     """
     return SM.getQuote(symbol)
 
-def getCandle(symbol,timeframe='Y',quality=default_quality, forceAPI=False)->dict:
+def getCandle(symbol,timeframe='Y', quality=default_quality, forceAPI=False)->dict:
     """general getcandle, decides where to take the candle from
     
     Arguments:
@@ -110,7 +110,7 @@ def getCandle(symbol,timeframe='Y',quality=default_quality, forceAPI=False)->dic
             return data
 
 
-def getDBCandle(symbol,timeframe='Y',quality=default_quality)->dict:
+def getDBCandle(symbol,timeframe='Y', quality=default_quality)->dict:
     """get candle from DB
     
     Arguments:
@@ -124,7 +124,7 @@ def getDBCandle(symbol,timeframe='Y',quality=default_quality)->dict:
     """
     return DM.getData(symbol,timeframe,quality)
 
-def updateLMfromData(data, symbol, timeframe='Y',quality=default_quality)->None:
+def updateLMfromData(data, symbol, timeframe='Y', quality=default_quality)->None:
     """this function updated the local storage from data given
     
     Arguments:
@@ -138,7 +138,7 @@ def updateLMfromData(data, symbol, timeframe='Y',quality=default_quality)->None:
     data["quality"] = quality
     LM.putData(symbol, "candle", data)
 
-def updateDBFromData(data, symbol,timeframe='Y',quality=default_quality)->None:
+def updateDBFromData(data, symbol,timeframe='Y', quality=default_quality)->None:
     """get candle from SM and store to DB
     
     Arguments:
@@ -156,7 +156,6 @@ def updateDBFromData(data, symbol,timeframe='Y',quality=default_quality)->None:
     DV.putExpirationDate(data)
     #start a new thread for uploading the info to the database
     threading.Thread(target=DM.storeData, args=[symbol,data]).start()
-
 
 
 def main():

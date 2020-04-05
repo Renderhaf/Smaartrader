@@ -4,7 +4,7 @@ import DataValidator as DV
 client = pymongo.MongoClient("mongodb+srv://StockManager:Manage123@maincluster-zlnck.mongodb.net/test?retryWrites=true&w=majority")
 database = client.get_database("StocksInfo")
 
-def storeData(symbol:str, data:dict,quality='low')->None:
+def storeData(symbol:str, data:dict, quality='high')->None:
     """This function stores candle data in the database, if that same data isn't already stored
     
     Arguments:
@@ -25,7 +25,7 @@ def storeData(symbol:str, data:dict,quality='low')->None:
         DV.putExpirationDate(newdata)
         collection.insert_one(newdata)
 
-def removeData(symbol:str, timeframe:str,quality:str='low')->None:
+def removeData(symbol:str, timeframe:str, quality:str='high')->None:
     """This function removes data from the database
     
     Arguments:
@@ -35,7 +35,7 @@ def removeData(symbol:str, timeframe:str,quality:str='low')->None:
     collection = database.get_collection(symbol)
     collection.delete_one({"timeframe": timeframe,"quality":quality})
 
-def getData(symbol:str, timeframe:str,quality:str='low')->dict:
+def getData(symbol:str, timeframe:str,quality:str='high')->dict:
     """This function returns candle data from the database
     
     Arguments:
