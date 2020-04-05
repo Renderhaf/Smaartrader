@@ -1,0 +1,81 @@
+<!Doctype html>
+<html lang="en" style="width:100% !important;">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+        <style>
+            body{
+                /*font-family: "Courier New";*/
+                font-family: 'Trebuchet MS';
+                overflow-x: hidden;
+            }
+
+            .zoomGraph{
+                transform: scale(1);
+                transition: all 0.5s ease-in-out;
+            } 
+            
+        </style>
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <title>Smaartrader | {%block title%}{%endblock%}</title>
+    </head>
+    <body>
+        <p class="h1 m-3" style="font-family: 'Courier New';">Welcome to Smaartrader</p>
+        {%block start_script%}{%endblock%}
+        <div class="row m-2">
+            <!-- Repeates for every stock -->
+            {% if stocks %}
+                {% for stock in stocks %}
+                    <div class="col-md-6 col-lg-4 p-3 col-sm-12">
+                        <div class = "p-3 zoomGraph" style="border: 1px solid black;">
+                            <div class="row">
+                                <!-- d-flex justify-content-center justify-content-md-left pb-3 pb-md-0 mb-3 mb-md-0 nametag -->
+                                <div class="pr-0 col-12 col-md-2 col-lg-12">
+                                    <p style="white-space: nowrap;"><span>{{stock}}</span> <span id="{{stock}}DiffArrow"></span></p>
+                                </div>
+
+                                <div class="col-xs-1 col-2 d-block d-md-none d-lg-block">
+                                    <!--Filler Div-->
+                                </div>
+                                <div class="col-2">
+                                    <span id="{{stock}}Price"></span>
+                                </div>
+                                <div class="col-2">
+                                    <span id="{{stock}}Diff"></span>
+                                </div>
+                                <div class="col-2">
+                                    <span id="{{stock}}percent"></span>
+                                </div>
+                               
+                                <div class="col-3 mr-0 pr-0 col-md-4 pl-3">
+                                    <div class="btn-group" data="{{stock}}">
+                                        <div class="btn btn-primary" onclick="{{stock}}selectTime(this)">Y</div>
+                                        <div class="btn btn-secondary" onclick="{{stock}}selectTime(this)">M</div>
+                                        <div class="btn btn-secondary d-none d-lg-block" onclick="{{stock}}selectTime(this)">W</div>
+                                        <div class="btn btn-secondary" onclick="{{stock}}selectTime(this)">D</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <canvas id="{{stock}}-chart" width="400" height="400"></canvas>
+                                {%block per_stock_script scoped%}{%endblock%}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {%block after_script%}{%endblock%}
+        </div>
+    </body>
+</html>
