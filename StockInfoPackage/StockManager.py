@@ -107,7 +107,7 @@ def getCandle(symbol,resolution='D',count=365)->dict:
     req=getRawCandle(symbol,resolution,count)
 
     #Make sure data is not empty
-    if len(req.keys()) == 0:
+    if len(req.keys()) == 0 or req['s'] == 'no_data':
         return dict()
 
     #format the dictionary and add custom values
