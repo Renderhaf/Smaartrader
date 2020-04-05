@@ -18,7 +18,7 @@ def candleStockAPIState(symbol, timeframe):
     #This is here so that when given empty data, the quary will go back upto regressionLimit (currently 3) days
     for i in range(regressionLimit):
         #No data in the candle
-        if stockData["s"] == "no_data":
+        if len(stockData.keys()) == 0:
             #Check again
             stockData = getStockCandle(symbol, timeframe, timeMul=i+1)
         else:
@@ -48,7 +48,6 @@ def candleDatabaseState(symbol, timeframe):
     return getDBCandle(symbol, timeframe)
 
 candleStateOrder = [candleLocalStorageState, candleStockAPIState, candleDatabaseState]
-candleStateOrder = [candleStockAPIState]
     
 def getStockCandle(symbol,timeframe='Y', timeMul=0)->dict:
     """get candle from SM
