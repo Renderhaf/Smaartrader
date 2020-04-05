@@ -33,6 +33,10 @@
 
         <p class="h1 m-3" style="font-family: 'Courier New';">Welcome to Smaartrader</p>
 
+        <script>
+            //This is a starter
+            var symbolsData = {}
+        </script>
         <div class="row m-2">
             <!-- Repeates for every stock -->
             {% if stocks %}
@@ -45,7 +49,7 @@
                                     <p style="white-space: nowrap;"><span>{{stock}}</span> <span id="{{stock}}DiffArrow"></span></p>
                                 </div>
 
-                                <div class="col-2 d-md-block d-none">
+                                <div class="col-2 d-lg-block d-none">
                                     <!--Filler Div-->
                                 </div>
                                 <div class="col-2">
@@ -60,71 +64,74 @@
                                
                                 <div class="col-3 mr-0 pr-0 col-md-4 pl-3">
                                     <div class="btn-group" data="{{stock}}">
-                                        <div class="btn btn-primary" onclick="{{stock}}selectTime(this)">Y</div>
-                                        <div class="btn btn-secondary" onclick="{{stock}}selectTime(this)">M</div>
-                                        <div class="btn btn-secondary d-none d-lg-block" onclick="{{stock}}selectTime(this)">W</div>
-                                        <div class="btn btn-secondary" onclick="{{stock}}selectTime(this)">D</div>
+                                        <div class="btn btn-primary" onclick="selectTime(this, '{{stock}}')">Y</div>
+                                        <div class="btn btn-secondary" onclick="selectTime(this, '{{stock}}')">M</div>
+                                        <div class="btn btn-secondary d-none d-lg-block" onclick="selectTime(this, '{{stock}}')">W</div>
+                                        <div class="btn btn-secondary" onclick="selectTime(this, '{{stock}}')">D</div>
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
+                                <canvas id="{{stock}}-chart" width="400" height="400"></canvas>
                                 <script>
-                                    var {{stock}}BorderColor = "";
-                                    var {{stock}}BackColor = "";
-                                    var {{stock}}Chart;
-                                    var {{stock}}ctx;
-                                    
-                                    //make an HTTP post request to the server, asking for the candle and quote data
-                                    $.post("/", {"type":"quote+candle", "name":"{{stock}}", "time": "Y"}, function(stockData, succsses){
-                                        let stockPrice = stockData["current_price"].toString().slice(0,-1);
-                                        document.getElementById("{{stock}}Price").innerHTML = stockPrice + "$  "
-
-                                        let stockpercent = stockData["difference_percentage"].toString().slice(0,-1);
-
-                                        let stockDiff = stockData["difference"].toString().slice(0,-1);
-                                        //▲, ▼
-                                        if (parseFloat(stockDiff) > 0){
-                                            document.getElementById("{{stock}}percent").innerHTML ="  +" + stockpercent + "%"
-                                            document.getElementById("{{stock}}DiffArrow").innerHTML = "▲"
-                                            document.getElementById("{{stock}}DiffArrow").style = "color: green"
-                                            document.getElementById("{{stock}}Diff").innerHTML ="  +"+stockDiff+ "$"
-                                        } else {
-                                            document.getElementById("{{stock}}percent").innerHTML ="  "+ stockpercent + "%"
-                                            document.getElementById("{{stock}}DiffArrow").innerHTML = "▼"
-                                            document.getElementById("{{stock}}DiffArrow").style = "color: red"
-                                            document.getElementById("{{stock}}Diff").innerHTML ="  "+stockDiff+ "$"
-                                        }
-                                        
-
-                                        //Change the graph colors based on the diff from the quote
-                                        if (parseFloat(stockDiff) > 0){
-                                            {{stock}}BorderColor = 'rgba(21, 255, 132, 1)';
-                                            {{stock}}BackColor = 'rgba(21, 255, 132, 0.2)';
-                                        } else {
-                                            {{stock}}BorderColor = 'rgba(255, 99, 132, 1)';
-                                            {{stock}}BackColor = 'rgba(255, 99, 132, 0.2)';
-                                        }
-                                        
-                                        //Init the stock chart 
-                                        {{stock}}ctx = document.getElementById('{{stock}}-chart').getContext('2d');
-                                        {{stock}}Chart = startChart({{stock}}ctx, stockData["prices"], stockData["dates"], {{stock}}BackColor, {{stock}}BorderColor);
-                                        
-                                    })
-
-                                    //A function that passes the jinja information to a normal javascript function
-                                    function {{stock}}selectTime(btn){
-                                        selectTime(btn, {{stock}}Chart, {{stock}}ctx, {{stock}}BackColor, {{stock}}BorderColor);
-                                    }
+                                    symbolsData["{{stock}}"] = {};
+                                    symbolsData["{{stock}}"].ctx = document.getElementById('{{stock}}-chart').getContext('2d');
                                 </script>
                             </div>
-                            <canvas id="{{stock}}-chart" width="400" height="400"></canvas>
                         </div>
                     </div>
                 {% endfor %}
             {% endif %}
 
             <script>
-                function selectTime(btn, Chart, ctx, BackColor, BorderColor){
+                //get all chart data
+                function getData(){
+                    //This is all the stock names
+                    let symbols = Object.keys(symbolsData);
+                    $.post("/", {"type":"quote+candle", "names": JSON.stringify(symbols), "time": "Y", "isMulti": true}, function(stockDatas, succsses){
+                        //Go over all the stocks
+                        for (stockName in stockDatas){
+                            let stockData = stockDatas[stockName];
+    
+                            let stockPrice = stockData["current_price"].toString().slice(0,-1);
+                            document.getElementById(stockName + "Price").innerHTML = stockPrice + "$  "
+    
+                            let stockpercent = stockData["difference_percentage"].toString().slice(0,-1);
+    
+                            let stockDiff = stockData["difference"].toString().slice(0,-1);
+                            //▲, ▼
+                            if (parseFloat(stockDiff) > 0){
+                                document.getElementById(stockName + "percent").innerHTML ="  +" + stockpercent + "%"
+                                document.getElementById(stockName + "DiffArrow").innerHTML = "▲"
+                                document.getElementById(stockName + "DiffArrow").style = "color: green"
+                                document.getElementById(stockName + "Diff").innerHTML ="  +"+stockDiff
+                            } else {
+                                document.getElementById(stockName + "percent").innerHTML ="  "+ stockpercent + "%"
+                                document.getElementById(stockName + "DiffArrow").innerHTML = "▼"
+                                document.getElementById(stockName + "DiffArrow").style = "color: red"
+                                document.getElementById(stockName + "Diff").innerHTML ="  "+stockDiff
+                            }
+                            
+                            let BorderColor, BackColor;
+                            //Change the graph colors based on the diff from the quote
+                            if (parseFloat(stockDiff) > 0){
+                                BorderColor = 'rgba(21, 255, 132, 1)';
+                                BackColor = 'rgba(21, 255, 132, 0.2)';
+                            } else {
+                                BorderColor = 'rgba(255, 99, 132, 1)';
+                                BackColor = 'rgba(255, 99, 132, 0.2)';
+                            }
+                            
+                            console.log(symbolsData[stockName])
+                            //Init the stock chart 
+                            symbolsData[stockName]["BackColor"] = BackColor;
+                            symbolsData[stockName]["BorderColor"] = BorderColor;
+                            symbolsData[stockName]["Chart"] = startChart(symbolsData[stockName]["ctx"], stockData["prices"], stockData["dates"], BackColor, BorderColor);
+                        }         
+                    })
+                }
+
+                function selectTime(btn, stockName){
                     //get all the buttons in that button group
                     otherBtns = btn.parentElement.childNodes
                     for (var i = 0; i < otherBtns.length; i++){
@@ -141,8 +148,8 @@
                     btn.classList.add("btn-primary");
 
                     //get the new info and update the chart with it
-                    $.post("/", {"type":"candle", "name":btn.parentElement.getAttribute("data"), "time": btn.innerHTML}, function(stockData, succsses){
-                        updateChart(Chart, stockData["prices"], stockData["dates"]);
+                    $.post("/", {"type":"candle", "name":btn.parentElement.getAttribute("data"), "time": btn.innerHTML, "isMulti": false}, function(stockData, succsses){
+                        updateChart(symbolsData[stockName]["Chart"], stockData["prices"], stockData["dates"]);
                     });
                 }
 
@@ -195,6 +202,10 @@
                     });
                     chart.update();
                 }
+
+                window.onload = function(){
+                    getData();
+                };
             </script>
         </div>
     </body>
