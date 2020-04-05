@@ -27,35 +27,46 @@ with open("companies.json", "r") as file:
 def index():
     if request.method == "POST": #POST
         if not WebSecurity.validatePOST(request):
-            return "The server could not validate this POST request"
-
-        if request.form["type"] == "quote+candle":
-            if request.form["isMulti"] == 'true':
-                symbolData = {}
-                for symbol in json.loads(request.form["names"]):
-                    data = IM.getStockQuote(symbol)
-                    candleData = IM.getCandle(symbol, request.form["time"])
+            return "Bad request. The server could not validate this POST request", 403 #Forbidden Request Status Code
+        
+        try: #These are put in a try except block in order to prevent crashing when bad post requests are sent
+            if request.form["type"] == "quote+candle":
+                if request.form["isMulti"] == 'true':
+                    symbolData = {}
+                    for symbol in json.loads(request.form["names"]):
+                        data = IM.getStockQuote(symbol)
+                        candleData = IM.getCandle(symbol, request.form["time"])
+                        data["prices"] = candleData["c"]
+                        data["dates"] = [time.ctime(t) for t in candleData["t"]]
+                        symbolData[symbol] = data
+                    return symbolData
+                else:
+                    data = IM.getStockQuote(request.form["name"])
+                    candleData = IM.getCandle(request.form["name"], request.form["time"])
                     data["prices"] = candleData["c"]
                     data["dates"] = [time.ctime(t) for t in candleData["t"]]
-                    symbolData[symbol] = data
-                return symbolData
-            else:
-                data = IM.getStockQuote(request.form["name"])
-                candleData = IM.getCandle(request.form["name"], request.form["time"])
-                data["prices"] = candleData["c"]
-                data["dates"] = [time.ctime(t) for t in candleData["t"]]
+                    return data
+
+            if request.form["type"] == "candle":
+                stockData = IM.getCandle(request.form["name"], request.form["time"])
+                prices = stockData["c"]
+                dates = [time.ctime(t) for t in stockData["t"]]
+                data = {"prices":prices, "dates":dates}
                 return data
 
-        if request.form["type"] == "candle":
-            stockData = IM.getCandle(request.form["name"], request.form["time"])
-            prices = stockData["c"]
-            dates = [time.ctime(t) for t in stockData["t"]]
-            data = {"prices":prices, "dates":dates}
-            return data
+            if request.form["type"] == "quote":
+                return IM.getStockQuote(request.form["name"])
 
-        if request.form["type"] == "quote":
-            return IM.getStockQuote(request.form["name"])
+        except Exception as err:
+            print("Internal Server Error: ", err)
+            return "Internal Server Error", 500 #Internal Server Error Status Code
+            
+        except KeyError:
+            pass
 
+        return "Bad request. The request is missing required keys", 400 #Bad Request Status Code
+
+        
     else: #GET
         viewedStocks = companies
         response = ""
@@ -63,6 +74,7 @@ def index():
             response =  render_template("oneRequestIndex.html", stocks = viewedStocks)
         else:
             response =  render_template("threadedRequestIndex.html", stocks = viewedStocks)
+
         response = make_response(response)
 
         #Decide whether this request needs a new sessionID
