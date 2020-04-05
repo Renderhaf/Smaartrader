@@ -1,3 +1,5 @@
 
 APIKEYS.json
 *.pyc
+localStorage.json
+sessionStorage.json

@@ -15,8 +15,6 @@ months={'Jan':'01','Feb':'02','Mar':'03','Apr':'04','May':'05','Jun':'06','Jul':
 maxAPICallsPerMinute = 45
 lastCallTimes = []
 
-
-
 def getRawQuote( symbol) -> dict:
     """get current quote of stock-uneditted
     
@@ -27,7 +25,10 @@ def getRawQuote( symbol) -> dict:
         dict -- the quote
     """
     req = requests.get(request.format('quote','symbol='+symbol))
-    return req.json()
+    try:
+        return req.json()
+    except json.JSONDecodeError:
+        return dict()
 
 def getQuote(symbol)->dict:
     """get current quote of stock- editted
@@ -39,6 +40,10 @@ def getQuote(symbol)->dict:
         dict -- the quote
     """
     req = getRawQuote(symbol)
+
+    if len(req.keys()) == 0:
+        return dict()
+
     fixedDict=dict()
     fixedDict["stockSymbol"]=symbol
     readableSplittedTime=time.ctime(req['t']).split()
@@ -105,9 +110,8 @@ def getCandle(symbol,resolution='D',count=365)->dict:
         dict -- candle
     """
     req=getRawCandle(symbol,resolution,count)
-
     #Make sure data is not empty
-    if len(req.keys()) == 0:
+    if len(req.keys()) == 0 or req['s']=='no_data' or not 'c' in req.keys():
         return dict()
 
     #format the dictionary and add custom values
