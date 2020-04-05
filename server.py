@@ -1,16 +1,19 @@
 import json
-import requests
 import os
-import time
-from flask import Flask, render_template, request
-import json
-import time
 import sys
+import time
+
+import requests
+from flask import Flask, make_response, render_template, request, jsonify
+
+#This is a module for Web Security, its currently used for sessions and CSRF protection
+import WebSecurity
+WebSecurity.resetStorage()
 
 #This adds the StockInfoPackage package to the path, so we can import from it
 sys.path.insert(1, './StockInfoPackage/')
-
 import InfoManager as IM
+
 
 app = Flask(__name__)
 
@@ -22,7 +25,10 @@ with open("companies.json", "r") as file:
 
 @app.route("/", methods = ["GET", "POST"])
 def index():
-    if request.method == "POST":
+    if request.method == "POST": #POST
+        if not WebSecurity.validatePOST(request):
+            return "The server could not validate this POST request"
+
         if request.form["type"] == "quote+candle":
             if request.form["isMulti"] == 'true':
                 symbolData = {}
@@ -50,13 +56,20 @@ def index():
         if request.form["type"] == "quote":
             return IM.getStockQuote(request.form["name"])
 
-
-    else: 
+    else: #GET
         viewedStocks = companies
+        response = ""
         if len(viewedStocks) > 10:
-            return render_template("oneRequestIndex.html", stocks = viewedStocks)
+            response =  render_template("oneRequestIndex.html", stocks = viewedStocks)
         else:
-            return render_template("threadedRequestIndex.html", stocks = viewedStocks)
+            response =  render_template("threadedRequestIndex.html", stocks = viewedStocks)
+        response = make_response(response)
+
+        #Decide whether this request needs a new sessionID
+        currentSessionID = request.cookies.get('sessionID', default="")
+        if not WebSecurity.isSessionStored(currentSessionID):
+            response.set_cookie("sessionID", WebSecurity.getNewSessionID())
+        return response
 
 if __name__ == "__main__":
     port = os.environ.get('PORT') or 5000
