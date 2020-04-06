@@ -18,7 +18,7 @@
     
     //make an HTTP post request to the server, asking for the candle and quote data
     setTimeout( () => {
-        $.post("/", {"type":"quote+candle", "name":"{{stock}}", "time": "Y", "isMulti":false}, function(stockData, succsses){
+        $.post("/", {"type":"quote+candle", "name":"{{stock}}", "time": "Y", "isMulti":false, "quality": "{{quality}}"}, function(stockData, succsses){
             let stockPrice = stockData["current_price"].toString().slice(0,-1);
             document.getElementById("{{stock}}Price").innerHTML = stockPrice + "$  "
 
@@ -84,7 +84,7 @@
         btn.classList.add("btn-primary");
 
         //get the new info and update the chart with it
-        $.post("/", {"type":"candle", "name":btn.parentElement.getAttribute("data"), "time": btn.innerHTML}, function(stockData, succsses){
+        $.post("/", {"type":"candle", "name":btn.parentElement.getAttribute("data"), "time": btn.innerHTML, "quality": "{{quality}}"}, function(stockData, succsses){
             updateChart(Chart, stockData["prices"], stockData["dates"]);
         });
     }
