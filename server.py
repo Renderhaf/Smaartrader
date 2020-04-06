@@ -14,14 +14,15 @@ WebSecurity.resetStorage()
 sys.path.insert(1, './StockInfoPackage/')
 import InfoManager as IM
 
-
 app = Flask(__name__)
 
 app.config['DEBUG'] = True
 app.config['HOST'] = 'localhost'
 
-with open("companies.json", "r") as file:
-    companies = json.loads(file.read())
+with open("settings.json", "r") as file:
+    data = json.loads(file.read())
+    companies = data["companies"]
+    mobilePlatforms = data["mobilePlatforms"]
 
 '''
 Helper functions for getting inforamtion
@@ -80,6 +81,8 @@ def index():
         return "Bad request. The request is missing required keys", 400 #Bad Request Status Code
 
     else:
+        if request.user_agent.platform in mobilePlatforms:
+            return redirect("/low")
         return redirect("/high")
 
 @app.route("/<quality>", methods = ["GET"])
@@ -88,7 +91,7 @@ def indexWithQuality(quality):
     response = ""
     workingQuality = quality if quality in ["high", "low"] else "high"
 
-    if len(viewedStocks) < 10:
+    if len(viewedStocks) > 10:
         response =  render_template("oneRequestIndex.html", stocks = viewedStocks, quality=workingQuality)
     else:
         response =  render_template("threadedRequestIndex.html", stocks = viewedStocks, quality=workingQuality)

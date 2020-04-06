@@ -1,0 +1,4 @@
+{
+    "companies": ["AAPL", "GOOGL", "TEVA", "TSLA", "AMZN", "INTC"],
+    "mobilePlatforms" : ["android", "iphone"]
+}

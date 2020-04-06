@@ -20,7 +20,7 @@
     function getData(){
         //This is all the stock names
         let symbols = Object.keys(symbolsData);
-        $.post("/", {"type":"quote+candle", "names": JSON.stringify(symbols), "time": "Y", "isMulti": true}, function(stockDatas, succsses){
+        $.post("/", {"type":"quote+candle", "names": JSON.stringify(symbols), "time": "Y", "isMulti": true, "quality": "{{quality}}"}, function(stockDatas, succsses){
             //Go over all the stocks
             for (stockName in stockDatas){
                 let stockData = stockDatas[stockName];
@@ -80,7 +80,7 @@
         btn.classList.add("btn-primary");
 
         //get the new info and update the chart with it
-        $.post("/", {"type":"candle", "name":btn.parentElement.getAttribute("data"), "time": btn.innerHTML, "isMulti": false}, function(stockData, succsses){
+        $.post("/", {"type":"candle", "name":btn.parentElement.getAttribute("data"), "time": btn.innerHTML, "isMulti": false, "quality": "{{quality}}"}, function(stockData, succsses){
             updateChart(symbolsData[stockName]["Chart"], stockData["prices"], stockData["dates"]);
         });
     }
