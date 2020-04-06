@@ -12,7 +12,7 @@ def storeData(symbol:str, data:dict, quality='high')->None:
         data {dict} -- [the data to be stored]
     """
     timeframe = data["timeframe"]
-    currentStoredData = getData(symbol, timeframe,quality)
+    currentStoredData = getData(symbol, timeframe, quality)
     #If the data is expired, remove it
     if DV.isExpired(currentStoredData):
         removeData(symbol, timeframe,quality)
@@ -33,7 +33,7 @@ def removeData(symbol:str, timeframe:str, quality:str='high')->None:
         timeframe {str} -- [the timeframe for the data to be removed]
     """
     collection = database.get_collection(symbol)
-    collection.delete_one({"timeframe": timeframe,"quality":quality})
+    collection.delete_one({"timeframe": timeframe, "quality":quality})
 
 def getData(symbol:str, timeframe:str,quality:str='high')->dict:
     """This function returns candle data from the database
@@ -55,7 +55,7 @@ def getData(symbol:str, timeframe:str,quality:str='high')->dict:
 def test():
     # storeData("GOOGL", {"prices": [1,2,3,4], "timeframe": "Y"})
     # removeData("GOOGL", "Y")
-    print(getData("GOOGL", "Y"))
+    print(getData("GM", "Y"))
 
 if __name__ == "__main__":
     test()

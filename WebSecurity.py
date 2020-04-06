@@ -6,9 +6,9 @@ import json
 storeLocation = "./sessionStorage.json"
 sessionLifetime = 12 * 60 * 60 #12 hours
 
-def getNewSessionID()->str:
+def getNewSessionID(lifetime: int = sessionLifetime)->str:
     token = secrets.token_hex(32)
-    storeToken(token)
+    storeToken(token, lifetime)
     return token
 
 def validatePOST(request: flask_request)->bool:
@@ -18,10 +18,10 @@ def resetStorage()->None:
     with open(storeLocation, "w") as file:
         file.write("{}")
 
-def storeToken(token:str)->None:
+def storeToken(token:str, lifetime:int = sessionLifetime)->None:
     storage = getSessionStorage()
 
-    expirationTime = time.time() + sessionLifetime
+    expirationTime = time.time() + lifetime
     storage[token] = {"expiration": expirationTime}
 
     with open(storeLocation, "w") as file:
