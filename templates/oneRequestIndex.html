@@ -1,212 +1,142 @@
-<!doctype html>
-<html lang="en" style="width:100% !important;">
-    <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% extends "HomeBase.html" %}
+{%block title%}Index{%endblock%}
 
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+{%block start_script%}
+<script>
+    var symbolsData = {}
+</script>
+{%endblock%}
 
-        <style>
-            body{
-                /*font-family: "Courier New";*/
-                font-family: 'Trebuchet MS';
-                overflow-x: hidden;
-            }
+{%block per_stock_script%}
+<script>
+    symbolsData["{{stock}}"] = {};
+    symbolsData["{{stock}}"].ctx = document.getElementById('{{stock}}-chart').getContext('2d');
+</script>
+{%endblock%}
 
-            .zoomGraph{
-                transform: scale(1);
-                transition: all 0.5s ease-in-out;
-            } 
-            
-        </style>
-        <!-- Optional JavaScript -->
-        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-        <title>Homepage</title>
-    </head>
-    <body>
+{%block after_script%}
+<script>
+    //get all chart data
+    function getData(){
+        //This is all the stock names
+        let symbols = Object.keys(symbolsData);
+        $.post("/", {"type":"quote+candle", "names": JSON.stringify(symbols), "time": "Y", "isMulti": true}, function(stockDatas, succsses){
+            //Go over all the stocks
+            for (stockName in stockDatas){
+                let stockData = stockDatas[stockName];
 
-        <p class="h1 m-3" style="font-family: 'Courier New';">Welcome to Smaartrader</p>
+                let stockPrice = stockData["current_price"].toString().slice(0,-1);
+                document.getElementById(stockName + "Price").innerHTML = stockPrice + "$  "
 
-        <script>
-            //This is a starter
-            var symbolsData = {}
-        </script>
-        <div class="row m-2">
-            <!-- Repeates for every stock -->
-            {% if stocks %}
-                {% for stock in stocks %}
-                    <div class="col-md-6 col-lg-4 p-3 col-sm-12">
-                        <div class = "p-3 zoomGraph" style="border: 1px solid black;">
-                            <div class="row">
-                                <!-- d-flex justify-content-center justify-content-md-left pb-3 pb-md-0 mb-3 mb-md-0 nametag -->
-                                <div class="col-2 pr-0 col-lg-12">
-                                    <p style="white-space: nowrap;"><span>{{stock}}</span> <span id="{{stock}}DiffArrow"></span></p>
-                                </div>
+                let stockpercent = stockData["difference_percentage"].toString().slice(0,-1);
 
-                                <div class="col-2 d-lg-block d-none">
-                                    <!--Filler Div-->
-                                </div>
-                                <div class="col-2">
-                                    <span id="{{stock}}Price"></span>
-                                </div>
-                                <div class="col-2">
-                                    <span id="{{stock}}Diff"></span>
-                                </div>
-                                <div class="col-2">
-                                    <span id="{{stock}}percent"></span>
-                                </div>
-                               
-                                <div class="col-3 mr-0 pr-0 col-md-4 pl-3">
-                                    <div class="btn-group" data="{{stock}}">
-                                        <div class="btn btn-primary" onclick="selectTime(this, '{{stock}}')">Y</div>
-                                        <div class="btn btn-secondary" onclick="selectTime(this, '{{stock}}')">M</div>
-                                        <div class="btn btn-secondary d-none d-lg-block" onclick="selectTime(this, '{{stock}}')">W</div>
-                                        <div class="btn btn-secondary" onclick="selectTime(this, '{{stock}}')">D</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <canvas id="{{stock}}-chart" width="400" height="400"></canvas>
-                                <script>
-                                    symbolsData["{{stock}}"] = {};
-                                    symbolsData["{{stock}}"].ctx = document.getElementById('{{stock}}-chart').getContext('2d');
-                                </script>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% endif %}
-
-            <script>
-                //get all chart data
-                function getData(){
-                    //This is all the stock names
-                    let symbols = Object.keys(symbolsData);
-                    $.post("/", {"type":"quote+candle", "names": JSON.stringify(symbols), "time": "Y", "isMulti": true}, function(stockDatas, succsses){
-                        //Go over all the stocks
-                        for (stockName in stockDatas){
-                            let stockData = stockDatas[stockName];
-    
-                            let stockPrice = stockData["current_price"].toString().slice(0,-1);
-                            document.getElementById(stockName + "Price").innerHTML = stockPrice + "$  "
-    
-                            let stockpercent = stockData["difference_percentage"].toString().slice(0,-1);
-    
-                            let stockDiff = stockData["difference"].toString().slice(0,-1);
-                            //▲, ▼
-                            if (parseFloat(stockDiff) > 0){
-                                document.getElementById(stockName + "percent").innerHTML ="  +" + stockpercent + "%"
-                                document.getElementById(stockName + "DiffArrow").innerHTML = "▲"
-                                document.getElementById(stockName + "DiffArrow").style = "color: green"
-                                document.getElementById(stockName + "Diff").innerHTML ="  +"+stockDiff
-                            } else {
-                                document.getElementById(stockName + "percent").innerHTML ="  "+ stockpercent + "%"
-                                document.getElementById(stockName + "DiffArrow").innerHTML = "▼"
-                                document.getElementById(stockName + "DiffArrow").style = "color: red"
-                                document.getElementById(stockName + "Diff").innerHTML ="  "+stockDiff
-                            }
-                            
-                            let BorderColor, BackColor;
-                            //Change the graph colors based on the diff from the quote
-                            if (parseFloat(stockDiff) > 0){
-                                BorderColor = 'rgba(21, 255, 132, 1)';
-                                BackColor = 'rgba(21, 255, 132, 0.2)';
-                            } else {
-                                BorderColor = 'rgba(255, 99, 132, 1)';
-                                BackColor = 'rgba(255, 99, 132, 0.2)';
-                            }
-                            
-                            console.log(symbolsData[stockName])
-                            //Init the stock chart 
-                            symbolsData[stockName]["BackColor"] = BackColor;
-                            symbolsData[stockName]["BorderColor"] = BorderColor;
-                            symbolsData[stockName]["Chart"] = startChart(symbolsData[stockName]["ctx"], stockData["prices"], stockData["dates"], BackColor, BorderColor);
-                        }         
-                    })
-                }
-
-                function selectTime(btn, stockName){
-                    //get all the buttons in that button group
-                    otherBtns = btn.parentElement.childNodes
-                    for (var i = 0; i < otherBtns.length; i++){
-                        //make sure that they are buttons
-                        if (otherBtns[i].nodeName == "DIV"){
-                            //unselect them all
-                            otherBtns[i].classList.remove("btn-primary", "btn-secondary");
-                            otherBtns[i].classList.add("btn-secondary")
-                        }
-                    }
-
-                    //select the clicked button
-                    btn.classList.remove("btn-secondary");
-                    btn.classList.add("btn-primary");
-
-                    //get the new info and update the chart with it
-                    $.post("/", {"type":"candle", "name":btn.parentElement.getAttribute("data"), "time": btn.innerHTML, "isMulti": false}, function(stockData, succsses){
-                        updateChart(symbolsData[stockName]["Chart"], stockData["prices"], stockData["dates"]);
-                    });
-                }
-
-                function startChart(ctx, yAxisData, xAxisData, BackColor, BorderColor){
-                    return new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: xAxisData,
-                            datasets: [{
-                                label: 'Price',
-                                data: yAxisData,
-                                backgroundColor: [
-                                    BackColor
-                                ],
-                                borderColor: [
-                                    BorderColor
-                                ],
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            legend: {
-                                display: false
-                            },
-                            //this makes the gridlines not display
-                            scales: {
-                                xAxes: [{
-                                    gridLines: {
-                                        color: "rgba(0, 0, 0, 0)",
-                                    },
-                                    ticks: {
-                                        display: false
-                                    }
-                                }],
-                                yAxes: [{
-                                    gridLines: {
-                                        color: "rgba(0, 0, 0, 0)",
-                                    }
-                                }]
-                            }
-                        }
-                    });
+                let stockDiff = stockData["difference"].toString().slice(0,-1);
+                //▲, ▼
+                if (parseFloat(stockDiff) > 0){
+                    document.getElementById(stockName + "percent").innerHTML ="  +" + stockpercent + "%"
+                    document.getElementById(stockName + "DiffArrow").innerHTML = "▲"
+                    document.getElementById(stockName + "DiffArrow").style = "color: green"
+                    document.getElementById(stockName + "Diff").innerHTML = "  +" + stockDiff + "$"
+                } else {
+                    document.getElementById(stockName + "percent").innerHTML ="  "+ stockpercent + "%"
+                    document.getElementById(stockName + "DiffArrow").innerHTML = "▼"
+                    document.getElementById(stockName + "DiffArrow").style = "color: red"
+                    document.getElementById(stockName + "Diff").innerHTML = "  " + stockDiff + "$"
                 }
                 
-                function updateChart(chart, yAxisData, xAxisData){
-                    Chart.defaults.global.animation.duration = 0;
-                    chart.data.labels = xAxisData
-                    chart.data.datasets.forEach((dataset) => {
-                        dataset.data = yAxisData
-                    });
-                    chart.update();
+                let BorderColor, BackColor;
+                //Change the graph colors based on the diff from the quote
+                if (parseFloat(stockDiff) > 0){
+                    BorderColor = 'rgba(21, 255, 132, 1)';
+                    BackColor = 'rgba(21, 255, 132, 0.2)';
+                } else {
+                    BorderColor = 'rgba(255, 99, 132, 1)';
+                    BackColor = 'rgba(255, 99, 132, 0.2)';
                 }
+                
+                console.log(symbolsData[stockName])
+                //Init the stock chart 
+                symbolsData[stockName]["BackColor"] = BackColor;
+                symbolsData[stockName]["BorderColor"] = BorderColor;
+                symbolsData[stockName]["Chart"] = startChart(symbolsData[stockName]["ctx"], stockData["prices"], stockData["dates"], BackColor, BorderColor);
+            }         
+        })
+    }
 
-                window.onload = function(){
-                    getData();
-                };
-            </script>
-        </div>
-    </body>
-</html>
+    function selectTime(btn, stockName){
+        //get all the buttons in that button group
+        otherBtns = btn.parentElement.childNodes
+        for (var i = 0; i < otherBtns.length; i++){
+            //make sure that they are buttons
+            if (otherBtns[i].nodeName == "DIV"){
+                //unselect them all
+                otherBtns[i].classList.remove("btn-primary", "btn-secondary");
+                otherBtns[i].classList.add("btn-secondary")
+            }
+        }
+
+        //select the clicked button
+        btn.classList.remove("btn-secondary");
+        btn.classList.add("btn-primary");
+
+        //get the new info and update the chart with it
+        $.post("/", {"type":"candle", "name":btn.parentElement.getAttribute("data"), "time": btn.innerHTML, "isMulti": false}, function(stockData, succsses){
+            updateChart(symbolsData[stockName]["Chart"], stockData["prices"], stockData["dates"]);
+        });
+    }
+
+    function startChart(ctx, yAxisData, xAxisData, BackColor, BorderColor){
+        return new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: xAxisData,
+                datasets: [{
+                    label: 'Price',
+                    data: yAxisData,
+                    backgroundColor: [
+                        BackColor
+                    ],
+                    borderColor: [
+                        BorderColor
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                legend: {
+                    display: false
+                },
+                //this makes the gridlines not display
+                scales: {
+                    xAxes: [{
+                        gridLines: {
+                            color: "rgba(0, 0, 0, 0)",
+                        },
+                        ticks: {
+                            display: false
+                        }
+                    }],
+                    yAxes: [{
+                        gridLines: {
+                            color: "rgba(0, 0, 0, 0)",
+                        }
+                    }]
+                }
+            }
+        });
+    }
+    
+    function updateChart(chart, yAxisData, xAxisData){
+        Chart.defaults.global.animation.duration = 0;
+        chart.data.labels = xAxisData
+        chart.data.datasets.forEach((dataset) => {
+            dataset.data = yAxisData
+        });
+        chart.update();
+    }
+
+    window.onload = function(){
+        getData();
+    };
+</script>
+{%endblock%}
