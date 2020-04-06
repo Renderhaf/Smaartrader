@@ -103,7 +103,12 @@
                     borderColor: [
                         BorderColor
                     ],
-                    borderWidth: 1
+                    borderWidth: 1,
+                    {%if quality == "high"%}
+                        pointRadius: 2.4
+                    {%else%}
+                        pointRadius: 3.5
+                    {%endif%}
                 }]
             },
             options: {
