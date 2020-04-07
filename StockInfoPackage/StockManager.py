@@ -86,7 +86,7 @@ def getRawCandle(symbol,resolution='D',count=365)->dict:
 
     requestExtension=('symbol={}&resolution={}&count={}').format(symbol,resolution,count)
     req = requests.get(request.format('stock/candle',requestExtension))
-
+    
     #As soon as we call the API, put the time into the call list
     lastCallTimes.append(time.time())
 

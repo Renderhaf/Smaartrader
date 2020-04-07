@@ -31,7 +31,7 @@ def candleStockAPIState(symbol, timeframe, quality):
     #The for looped for regressionLimit times, and did not find anything
     else:
         print("Shit. This wasn't supposed to happen")
-        return {"c": [], "t": []}
+        return dict()
 
     #make sure that the data is not empty
     if len(stockData.keys()) == 0:
