@@ -91,7 +91,7 @@ def indexWithQuality(quality):
     response = ""
     workingQuality = quality if quality in ["high", "low"] else "high"
 
-    if len(viewedStocks) < 10:
+    if len(viewedStocks) > 10:
         response =  render_template("oneRequestIndex.html", stocks = viewedStocks, quality=workingQuality)
     else:
         response =  render_template("threadedRequestIndex.html", stocks = viewedStocks, quality=workingQuality)
