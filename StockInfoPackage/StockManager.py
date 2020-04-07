@@ -25,6 +25,7 @@ def getRawQuote( symbol) -> dict:
         dict -- the quote
     """
     req = requests.get(request.format('quote','symbol='+symbol))
+    print("quote for " + symbol + "is: ", req.text)
     try:
         return req.json()
     except json.JSONDecodeError:
@@ -43,6 +44,7 @@ def getQuote(symbol)->dict:
 
     if len(req.keys()) == 0:
         return dict()
+
 
     fixedDict=dict()
     fixedDict["stockSymbol"]=symbol

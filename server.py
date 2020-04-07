@@ -13,6 +13,7 @@ WebSecurity.resetStorage()
 #This adds the StockInfoPackage package to the path, so we can import from it
 sys.path.insert(1, './StockInfoPackage/')
 import InfoManager as IM
+import StockInfoManager as SI
 
 app = Flask(__name__)
 
@@ -82,10 +83,10 @@ def index():
 
     else:
         if request.user_agent.platform in mobilePlatforms:
-            return redirect("/low")
-        return redirect("/high")
+            return redirect("/home/low")
+        return redirect("/home/high")
 
-@app.route("/<quality>", methods = ["GET"])
+@app.route("/home/<quality>", methods = ["GET"])
 def indexWithQuality(quality):
     viewedStocks = companies
     response = ""
@@ -97,6 +98,20 @@ def indexWithQuality(quality):
         response =  render_template("threadedRequestIndex.html", stocks = viewedStocks, quality=workingQuality)
 
     response = make_response(response)
+
+    #Decide whether this request needs a new sessionID
+    currentSessionID = request.cookies.get('sessionID', default="")
+    if not WebSecurity.isSessionStored(currentSessionID):
+        response.set_cookie("sessionID", WebSecurity.getNewSessionID())
+
+    return response
+
+@app.route("/stock/<stockname>", methods=['GET'])
+def singleStockPage(stockname):
+    response = make_response(render_template("singleStockPage.html", stock = stockname,
+                                                                    quality="high",
+                                                                    name=SI.getName(stockname),
+                                                                    wikiarticle=SI.getWikiArticle(stockname)))
 
     #Decide whether this request needs a new sessionID
     currentSessionID = request.cookies.get('sessionID', default="")
