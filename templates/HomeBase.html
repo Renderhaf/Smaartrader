@@ -1,7 +1,20 @@
 {% extends 'GeneralPage.html' %}
 {%block body%}
     <body>
-        <p class="h1 m-3" style="font-family: 'Courier New';">Welcome to Smaartrader</p>
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <p class="h1 m-3" style="font-family: 'Courier New';">Welcome to Smaartrader</p>
+            </div>
+            <div class="col-md-4 col-0"></div>
+            <div class="col-12 col-md-2">
+                <form action="/searchStock" method="post" class="input-group pr-4 pl-4 pt-4" id="searchForm">
+                    <div class="input-group-prepend">
+                      <button class="btn btn-outline-dark" type="submit" onclick="searchStock()">Search</button>
+                    </div>
+                    <input autocomplete="off" form = "searchForm" type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" name="stockFormName">
+                </form>
+            </div>
+        </div>
         {%block start_script%}{%endblock%}
         <div class="row m-2">
             <!-- Repeates for every stock -->
@@ -48,5 +61,10 @@
 
             {%block after_script%}{%endblock%}
         </div>
+        <script>
+            function searchStock(stockName){
+                document.getElementsByName("stockFormName").value = "";
+            }
+        </script>
     </body>
 {%endblock%}

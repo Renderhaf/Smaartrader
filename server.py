@@ -120,6 +120,11 @@ def singleStockPage(stockname):
 
     return response
 
+@app.route("/searchStock", methods=['POST'])
+def searchStock():
+    print(request.form.get("stockFormName"), "--------------------")
+    return redirect("/stock/"+request.form.get("stockFormName"))
+    
 if __name__ == "__main__":
     port = os.environ.get('PORT') or 5000
     app.run(host='0.0.0.0', port=int(port))
