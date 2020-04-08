@@ -13,10 +13,11 @@ def getWikiArticle(ticker: str)->str:
     else:
         quary = name
     url = 'https://en.wikipedia.org/w/api.php?action=opensearch&search="{}"&limit=1&format=json'.format(quary)
-    return requests.get(url).json()[-1][0]
+    return requests.get(url).json()[-1][0].replace("en.", "en.m.")
 
 def main():
     print(getWikiArticle("GOOG"))
 
 if __name__ == "__main__":
     main()
+
