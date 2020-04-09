@@ -132,7 +132,16 @@ def singleStockPage(stockname):
 
 @app.route("/searchStock", methods=['POST'])
 def searchStock():
-    return redirect("/stock/"+request.form.get("stockFormName"))
+    response = dict()
+    stockTicker = request.form.get("searchStock")
+
+    if WebSecurity.checkForSpecialChars(stockTicker) or not IM.isAnExistingTicker(stockTicker):
+        response["type"] = "alert"
+        response["data"] = "That is not a valid stock ticker"
+    else:
+        response["type"] = "link"
+        response["data"] = "/stock/"+stockTicker
+    return response
     
 if __name__ == "__main__":
     port = os.environ.get('PORT') or 5000
