@@ -4,20 +4,24 @@ import sys
 
 import InfoManager as IM
 
-with open("./DataFiles/stockTickers.json", "r") as file:
-    tickers = json.loads(file.read())
-
-def getName(ticker:str)->str:
-    return tickers.get(ticker, ticker)
 
 def getWikiArticle(ticker: str)->str:
-    name = getName(ticker)
+    '''
+    returns a wikipedia article about the stock ticker. If it cant find a article, it gives an article about the stock market
+    '''
+    name = IM.getName(ticker)
+    defaultArticle = "https://en.m.wikipedia.org/wiki/Stock_market"
     if name == ticker:
-        quary = "Stock Market"
+        return defaultArticle
     else:
         quary = name
     url = 'https://en.wikipedia.org/w/api.php?action=opensearch&search="{}"&limit=1&format=json'.format(quary)
-    return requests.get(url).json()[-1][0].replace("en.", "en.m.")
+
+    try:
+        wikilink = requests.get(url).json()[-1][0].replace("en.", "en.m.")
+    except IndexError:
+        return defaultArticle
+    return wikilink
 
 def getCurrentTrend(ticker: str, weeksBack:int=1):
     stockData = IM.getCandle(ticker, timeframe="Y", quality="high").get("c")

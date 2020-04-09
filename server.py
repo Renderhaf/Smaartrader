@@ -111,11 +111,15 @@ def indexWithQuality(quality):
 
 @app.route("/stock/<stockname>", methods=['GET'])
 def singleStockPage(stockname):
+    #Make sure the stockname is a valid stock name
+    if WebSecurity.checkForSpecialChars(stockname) or not IM.isAnExistingTicker(stockname):
+        return "<h1>That is not a valid stock ticker</h1>"
+
     stockTrend = SI.getCurrentTrend(stockname)
 
     response = make_response(render_template("singleStockPage.html", stock = stockname,
                                                                     quality="high",
-                                                                    name=SI.getName(stockname),
+                                                                    name=IM.getName(stockname),
                                                                     wikiarticle=SI.getWikiArticle(stockname),
                                                                     stocktrend=stockTrend))
 
