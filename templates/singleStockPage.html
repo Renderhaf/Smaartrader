@@ -1,0 +1,238 @@
+{% extends 'GeneralPage.html' %}
+{%block title%}
+{{stock}} Information
+{% endblock %}
+{%block body%}
+    <body class="container-fluid pt-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <p class="h3">Name: {{name}}</p>
+            </div>
+        </div>
+        
+        <div class="row d-flex justify-content-center main-row">
+            <div class="col-lg-4 p-3 col-12 d-block">
+                <div class ="container p-3 zoomGraph" style="border: 1px solid black;">
+                    <div class="row">
+                        <!-- d-flex justify-content-center justify-content-md-left pb-3 pb-md-0 mb-3 mb-md-0 nametag -->
+                        <div class="pr-0 col-12 col-md-2 col-lg-12">
+                            <p style="white-space: nowrap;"><span>{{stock}}</span> <span id="{{stock}}DiffArrow"></span></p>
+                        </div>
+
+                        <div class="col-xs-1 col-2 d-block d-md-none d-lg-block">
+                            <!--Filler Div-->
+                        </div>
+                        <div class="col-2">
+                            <span id="{{stock}}Price"></span>
+                        </div>
+                        <div class="col-2">
+                            <span id="{{stock}}Diff"></span>
+                        </div>
+                        <div class="col-2">
+                            <span id="{{stock}}percent"></span>
+                        </div>
+                        
+                        <div class="col-3 mr-0 pr-0 col-md-4 pl-3">
+                            <div class="btn-group" data="{{stock}}">
+                                <div class="btn btn-primary" onclick="{{stock}}selectTime(this)">Y</div>
+                                <div class="btn btn-secondary" onclick="{{stock}}selectTime(this)">M</div>
+                                <div class="btn btn-secondary d-none d-lg-block" onclick="{{stock}}selectTime(this)">W</div>
+                                <div class="btn btn-secondary" onclick="{{stock}}selectTime(this)">D</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row p-1">
+                        <div class="col-12">
+                            <canvas id="{{stock}}-chart" width="400" height="400"></canvas>
+                            <script>
+                                var {{stock}}BorderColor = "";
+                                var {{stock}}BackColor = "";
+                                var {{stock}}Chart;
+                                var {{stock}}ctx;
+                                
+                                //make an HTTP post request to the server, asking for the candle and quote data
+                                $.post("/", {"type":"quote+candle", "name":"{{stock}}", "time": "Y", "isMulti":false, "quality": "{{quality}}"}, function(stockData, succsses){
+                                    let stockPrice = stockData["current_price"].toString().slice(0,-1);
+                                    document.getElementById("{{stock}}Price").innerHTML = stockPrice + "$  "
+    
+                                    let stockpercent = stockData["difference_percentage"].toString().slice(0,-1);
+    
+                                    let stockDiff = stockData["difference"].toString().slice(0,-1);
+                                    //▲, ▼
+                                    if (parseFloat(stockDiff) > 0){
+                                        document.getElementById("{{stock}}percent").innerHTML = "  +" + stockpercent + "%"
+                                        document.getElementById("{{stock}}DiffArrow").innerHTML = "▲"
+                                        document.getElementById("{{stock}}DiffArrow").style = "color: green"
+                                        document.getElementById("{{stock}}Diff").innerHTML = "  +" + stockDiff + "$"
+                                    } else {
+                                        document.getElementById("{{stock}}percent").innerHTML = "  "+ stockpercent + "%"
+                                        document.getElementById("{{stock}}DiffArrow").innerHTML = "▼"
+                                        document.getElementById("{{stock}}DiffArrow").style = "color: red"
+                                        document.getElementById("{{stock}}Diff").innerHTML = "  " + stockDiff + "$"
+                                    }
+                                    
+    
+                                    //Change the graph colors based on the diff from the quote
+                                    if (parseFloat(stockDiff) > 0){
+                                        {{stock}}BorderColor = 'rgba(21, 255, 132, 1)';
+                                        {{stock}}BackColor = 'rgba(21, 255, 132, 0.2)';
+                                    } else {
+                                        {{stock}}BorderColor = 'rgba(255, 99, 132, 1)';
+                                        {{stock}}BackColor = 'rgba(255, 99, 132, 0.2)';
+                                    }
+                                    
+                                    //Init the stock chart 
+                                    {{stock}}ctx = document.getElementById('{{stock}}-chart').getContext('2d');
+                                    {{stock}}Chart = startChart({{stock}}ctx, stockData["prices"], stockData["dates"], {{stock}}BackColor, {{stock}}BorderColor);
+                                    
+                                });
+                                
+    
+    
+                                //A function that passes the jinja information to a normal javascript function
+                                function {{stock}}selectTime(btn){
+                                    selectTime(btn, {{stock}}Chart, {{stock}}ctx, {{stock}}BackColor, {{stock}}BorderColor);
+                                }
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-4 p-3 justify-content-center ">
+                <div class="accordion" id="accordionExample">
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Wikipedia Article
+                                </button>
+                            </h5>
+                        </div>
+
+                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div class="card-body p-0">
+                                <div class="embed-responsive side-info">
+                                    <iframe class="embed-responsive-item" src="{{wikiarticle}}"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-header" id="headingTwo">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Analysis
+                                </button>
+                            </h5>
+                        </div>
+
+                        <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                            <div class="card-body side-info">
+                                <div class="row">
+                                    <div class="col-12 d-flex justify-content-center">
+                                        <p class="h5 text-muted">This segment is in progress</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 d-flex justify-content-center">
+                                        <table>
+                                            <tr>
+                                                <td><p class="h5">Current Stock Trend:</td>
+                                                <td>
+                                                    {%if stocktrend|float > 0.0%}
+                                                        <p class="h5" style="color:green">{{stocktrend}}</p>
+                                                    {%else%}
+                                                        <p class="h5" style="color:red">{{stocktrend}}</p>   
+                                                    {%endif%}
+                                                </td>
+                                            </tr>
+                                        </table> 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </body>
+    <script>
+        function selectTime(btn, Chart, ctx, BackColor, BorderColor){
+            //get all the buttons in that button group
+            otherBtns = btn.parentElement.childNodes
+            for (var i = 0; i < otherBtns.length; i++){
+                //make sure that they are buttons
+                if (otherBtns[i].nodeName == "DIV"){
+                    //unselect them all
+                    otherBtns[i].classList.remove("btn-primary", "btn-secondary");
+                    otherBtns[i].classList.add("btn-secondary")
+                }
+            }
+
+            //select the clicked button
+            btn.classList.remove("btn-secondary");
+            btn.classList.add("btn-primary");
+
+            //get the new info and update the chart with it
+            $.post("/", {"type":"candle", "name":btn.parentElement.getAttribute("data"), "time": btn.innerHTML, "quality": "{{quality}}"}, function(stockData, succsses){
+                updateChart(Chart, stockData["prices"], stockData["dates"]);
+            });
+        }
+
+        function startChart(ctx, yAxisData, xAxisData, BackColor, BorderColor){
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: xAxisData,
+                    datasets: [{
+                        label: 'Price',
+                        data: yAxisData,
+                        backgroundColor: [
+                            BackColor
+                        ],
+                        borderColor: [
+                            BorderColor
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: false
+                    },
+                    //this makes the gridlines not display
+                    scales: {
+                        xAxes: [{
+                            gridLines: {
+                                color: "rgba(0, 0, 0, 0)",
+                            },
+                            ticks: {
+                                display: false
+                            }
+                        }],
+                        yAxes: [{
+                            gridLines: {
+                                color: "rgba(0, 0, 0, 0)",
+                            }
+                        }]
+                    }
+                }
+            });
+        }
+        
+        function updateChart(chart, yAxisData, xAxisData){
+            Chart.defaults.global.animation.duration = 0;
+            chart.data.labels = xAxisData
+            chart.data.datasets.forEach((dataset) => {
+                dataset.data = yAxisData
+            });
+            chart.update();
+        }
+
+        $(document).ready(function() {
+            $(".side-info").css("height", $(".main-row").height());
+        });
+    </script>
+{% endblock %}

@@ -10,9 +10,14 @@ from flask import Flask, make_response, render_template, request, redirect
 import WebSecurity
 WebSecurity.resetStorage()
 
+#This is a module for stock data analysis
+
 #This adds the StockInfoPackage package to the path, so we can import from it
 sys.path.insert(1, './StockInfoPackage/')
 import InfoManager as IM
+import StockAnalysisManager as SI
+
+
 
 app = Flask(__name__)
 
@@ -54,7 +59,6 @@ def index():
         
         # Serve data to the request
         dataQuality = request.form.get("quality", "high")
-        print(request.origin)
         try: #These are put in a try except block in order to prevent crashing when bad post requests are sent
             if request.form["type"] == "quote+candle":
                 if request.form["isMulti"] == 'true':
@@ -105,6 +109,40 @@ def indexWithQuality(quality):
 
     return response
 
+@app.route("/stock/<stockname>", methods=['GET'])
+def singleStockPage(stockname):
+    #Make sure the stockname is a valid stock name
+    if WebSecurity.checkForSpecialChars(stockname) or not IM.isAnExistingTicker(stockname):
+        return "<h1>That is not a valid stock ticker</h1>"
+
+    stockTrend = SI.getCurrentTrend(stockname)
+
+    response = make_response(render_template("singleStockPage.html", stock = stockname,
+                                                                    quality="high",
+                                                                    name=IM.getName(stockname),
+                                                                    wikiarticle=SI.getWikiArticle(stockname),
+                                                                    stocktrend=stockTrend))
+
+    #Decide whether this request needs a new sessionID
+    currentSessionID = request.cookies.get('sessionID', default="")
+    if not WebSecurity.isSessionStored(currentSessionID):
+        response.set_cookie("sessionID", WebSecurity.getNewSessionID())
+
+    return response
+
+@app.route("/searchStock", methods=['POST'])
+def searchStock():
+    response = dict()
+    stockTicker = request.form.get("searchStock")
+
+    if WebSecurity.checkForSpecialChars(stockTicker) or not IM.isAnExistingTicker(stockTicker):
+        response["type"] = "alert"
+        response["data"] = "That is not a valid stock ticker"
+    else:
+        response["type"] = "link"
+        response["data"] = "/stock/"+stockTicker
+    return response
+    
 if __name__ == "__main__":
     port = os.environ.get('PORT') or 5000
     app.run(host='0.0.0.0', port=int(port))

@@ -3,6 +3,7 @@ import DatabaseManager as DM
 import LocalDataManager as LM
 import DataValidator as DV
 import threading
+import json
 
 qualities={'high':{'TTR':{'Y':'D','M':'D','W':30,'D':5},'TTC':{'Y':365,'M':30,'W':336,'D':288}},\
     'low':{'TTR':{'Y':'W','M':'D','W':60,'D':30},'TTC':{'Y':52,'M':30,'W':168,'D':48}}}
@@ -14,6 +15,22 @@ regressionLimit = 3
 DEBUG = True
 
 default_quality='high'
+
+#Get the list of avilable stocks and their names
+with open("./DataFiles/stockTickers.json", "r") as file:
+    tickerData:dict = json.loads(file.read())
+
+def getName(ticker:str)->str:
+    '''
+    Gets the name of the stock based on its ticket. If the ticker does not have a name, the ticker is returned back
+    '''  
+    return tickerData.get(ticker, ticker)
+
+def isAnExistingTicker(ticker:str)->bool:
+    '''
+    Checks if the ticker is the the pool of tickers
+    '''
+    return ticker in tickerData.keys()
 
 def candleStockAPIState(symbol, timeframe, quality):
     if DEBUG:
