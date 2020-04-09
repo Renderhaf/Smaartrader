@@ -10,10 +10,14 @@ from flask import Flask, make_response, render_template, request, redirect
 import WebSecurity
 WebSecurity.resetStorage()
 
+#This is a module for stock data analysis
+
 #This adds the StockInfoPackage package to the path, so we can import from it
 sys.path.insert(1, './StockInfoPackage/')
 import InfoManager as IM
-import StockInfoManager as SI
+import StockAnalysisManager as SI
+
+
 
 app = Flask(__name__)
 
@@ -55,7 +59,6 @@ def index():
         
         # Serve data to the request
         dataQuality = request.form.get("quality", "high")
-        print(request.origin)
         try: #These are put in a try except block in order to prevent crashing when bad post requests are sent
             if request.form["type"] == "quote+candle":
                 if request.form["isMulti"] == 'true':
@@ -108,10 +111,13 @@ def indexWithQuality(quality):
 
 @app.route("/stock/<stockname>", methods=['GET'])
 def singleStockPage(stockname):
+    stockTrend = SI.getCurrentTrend(stockname)
+
     response = make_response(render_template("singleStockPage.html", stock = stockname,
                                                                     quality="high",
                                                                     name=SI.getName(stockname),
-                                                                    wikiarticle=SI.getWikiArticle(stockname)))
+                                                                    wikiarticle=SI.getWikiArticle(stockname),
+                                                                    stocktrend=stockTrend))
 
     #Decide whether this request needs a new sessionID
     currentSessionID = request.cookies.get('sessionID', default="")
@@ -122,7 +128,6 @@ def singleStockPage(stockname):
 
 @app.route("/searchStock", methods=['POST'])
 def searchStock():
-    print(request.form.get("stockFormName"), "--------------------")
     return redirect("/stock/"+request.form.get("stockFormName"))
     
 if __name__ == "__main__":

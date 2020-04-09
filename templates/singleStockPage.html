@@ -110,7 +110,7 @@
                             </h5>
                         </div>
 
-                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                             <div class="card-body p-0">
                                 <div class="embed-responsive side-info">
                                     <iframe class="embed-responsive-item" src="{{wikiarticle}}"></iframe>
@@ -126,9 +126,29 @@
                             </h5>
                         </div>
 
-                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                        <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionExample">
                             <div class="card-body side-info">
-                                <p class="h3">In Progress</p>
+                                <div class="row">
+                                    <div class="col-12 d-flex justify-content-center">
+                                        <p class="h5 text-muted">This segment is in progress</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 d-flex justify-content-center">
+                                        <table>
+                                            <tr>
+                                                <td><p class="h5">Current Stock Trend:</td>
+                                                <td>
+                                                    {%if stocktrend|float > 0.0%}
+                                                        <p class="h5" style="color:green">{{stocktrend}}</p>
+                                                    {%else%}
+                                                        <p class="h5" style="color:red">{{stocktrend}}</p>   
+                                                    {%endif%}
+                                                </td>
+                                            </tr>
+                                        </table> 
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
