@@ -32,9 +32,13 @@ def isAnExistingTicker(ticker:str)->bool:
     '''
     return ticker in tickerData.keys()
 
+
+'''
+States and state order for candle supplier
+'''
 def candleStockAPIState(symbol, timeframe, quality):
     if DEBUG:
-        print("{} : Entered stock state".format(symbol))
+        print("{} : Entered stock candle state".format(symbol))
     stockData = getStockCandle(symbol,timeframe,quality)  
 
     #This is here so that when given empty data, the quary will go back upto regressionLimit (currently 3) days
@@ -62,16 +66,51 @@ def candleStockAPIState(symbol, timeframe, quality):
 
 def candleLocalStorageState(symbol, timeframe, quality=default_quality):
     if DEBUG:
-        print("{} : Entered local state".format(symbol))
-    return LM.getData(symbol, "candle", timeframe,quality)
+        print("{} : Entered local candle state".format(symbol))
+    return LM.getData(symbol, timeframe, quality)
 
 def candleDatabaseState(symbol, timeframe,quality=default_quality):
     if DEBUG:
-        print("{} : Entered database state".format(symbol))
-    return getDBCandle(symbol, timeframe,quality)
+        print("{} : Entered database candle state".format(symbol))
+    return getDBData(symbol, timeframe, quality)
 
 candleStateOrder = [candleLocalStorageState, candleStockAPIState, candleDatabaseState]
-    
+
+
+'''
+States and state oreder for quote supplier
+'''
+def quoteStockState(symbol):
+    if DEBUG:
+        print("{} : Entered stock quote state".format(symbol))
+        
+    quote = getStockQuote(symbol)
+
+    if len(quote.keys()) == 0:
+        return dict()
+    #Update the local storage
+    updateLMfromData(quote, symbol, "Q", "high")
+    #Update the database
+    updateDBFromData(quote, symbol, "Q", "high")
+
+    return quote
+
+def quoteLocalState(symbol):
+    if DEBUG:
+        print("{} : Entered local quote state".format(symbol))
+    return LM.getData(symbol, "Q", "high")
+
+def quoteDatabaseState(symbol):
+    if DEBUG:
+        print("{} : Entered local database state".format(symbol))
+    return getDBData(symbol, "Q", "high")
+
+quoteStateOrder = [quoteLocalState, quoteStockState, quoteDatabaseState]
+
+
+'''
+Suppliers
+'''    
 def getStockCandle(symbol,timeframe='Y', quality=default_quality, timeMul=0)->dict:
     """get candle from SM
     
@@ -125,8 +164,26 @@ def getCandle(symbol,timeframe='Y', quality=default_quality, forceAPI=False)->di
         if len(data.keys()) != 0:
             return data
 
+def getQuote(symbol:str, forceAPI:bool=False)->dict:
+    """general getQuote, decides where to take the quote from
+    
+    Arguments:
+        symbol {str} -- stock symbol(eg:AAPL)
+    
+    Returns:
+        dict -- quote
+    """  
+    if forceAPI:
+        return getStockQuote(symbol)
 
-def getDBCandle(symbol,timeframe='Y', quality=default_quality)->dict:
+
+    for state in quoteStateOrder:
+        data = state(symbol)
+        if len(data.keys()) != 0:
+            return data
+
+
+def getDBData(symbol,timeframe='Y', quality=default_quality)->dict:
     """get candle from DB
     
     Arguments:
@@ -152,7 +209,7 @@ def updateLMfromData(data, symbol, timeframe='Y', quality=default_quality)->None
     """
     data["timeframe"] = timeframe
     data["quality"] = quality
-    LM.putData(symbol, "candle", data)
+    LM.putData(symbol, data)
 
 def updateDBFromData(data, symbol,timeframe='Y', quality=default_quality)->None:
     """get candle from SM and store to DB

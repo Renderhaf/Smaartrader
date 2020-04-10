@@ -34,7 +34,7 @@ Helper functions for getting inforamtion
 The function names are based on their type in the POST request
 '''
 def getCandlePlusQuote(stock: str, timeframe: str = "Y", quality:str = "high")->dict:
-    data = IM.getStockQuote(stock)
+    data = IM.getQuote(stock)
     candleData = IM.getCandle(stock, timeframe, quality)
     data["prices"] = candleData["c"]
     data["dates"] = [time.ctime(t) for t in candleData["t"]]
@@ -48,7 +48,7 @@ def getCandle(stock: str, timeframe: str = "Y", quality:str = "high")->dict:
     return data
 
 def getQuote(stock: str)->dict:
-    return IM.getStockQuote(request.form["name"])
+    return IM.getQuote(request.form["name"])
 
 @app.route("/", methods = ["GET", "POST"])
 def index():
