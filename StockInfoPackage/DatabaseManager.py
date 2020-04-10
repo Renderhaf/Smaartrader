@@ -22,7 +22,8 @@ def storeData(symbol:str, data:dict, quality='high')->None:
         #Store the data
         collection = database.get_collection(symbol)
         newdata = data
-        DV.putExpirationDate(newdata)
+        #Put a longer expiration date on the data since its mostly for backup
+        DV.putExpirationDate(newdata, 2)
         collection.insert_one(newdata)
 
 def removeData(symbol:str, timeframe:str, quality:str='high')->None:
