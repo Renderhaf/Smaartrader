@@ -102,6 +102,13 @@
                     document.getElementById("stockFormName").value = "";
                 });
             }
+
+            //Make search field always uppercase
+            var searchBar = document.getElementById("stockFormName")
+
+            searchBar.addEventListener("input", function(){
+                searchBar.value = searchBar.value.toUpperCase();
+            });
         </script>
     </body>
 {%endblock%}
