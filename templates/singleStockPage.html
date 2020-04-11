@@ -136,16 +136,18 @@
                                 <div class="row">
                                     <div class="col-12 d-flex justify-content-center">
                                         <table>
+                                            {% for indicator in indicators%}
                                             <tr>
-                                                <td><p class="h5">Current Stock Trend:</td>
+                                                <td><p class="h5 mr-3">{{indicator[0]}}</td>
                                                 <td>
-                                                    {%if stocktrend|float > 0.0%}
-                                                        <p class="h5" style="color:green">{{stocktrend}}</p>
+                                                    {%if indicator[2]%}
+                                                        <p class="h5" style="color:green">{{indicator[1]}}</p>
                                                     {%else%}
-                                                        <p class="h5" style="color:red">{{stocktrend}}</p>   
+                                                        <p class="h5" style="color:red">{{indicator[1]}}</p>   
                                                     {%endif%}
                                                 </td>
                                             </tr>
+                                            {%endfor%}
                                         </table> 
                                     </div>
                                 </div>

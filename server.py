@@ -117,11 +117,19 @@ def singleStockPage(stockname):
 
     stockTrend = SI.getCurrentTrend(stockname)
 
+    sampleSize = 25
+    currentSMA, stockPrice = SI.getCurrentSMA(stockname, sampleSize, returnPrice=True)
+    currentEMA = SI.getCurrentEMA(stockname, sampleSize)
+
+    indicators = [["Trend (10 Days)", stockTrend, stockTrend > 0], 
+                    ["SMA (25 Days)", currentSMA, currentSMA < stockPrice],
+                    ["EMA (25 Days)", currentEMA, currentEMA < stockPrice]]
+
     response = make_response(render_template("singleStockPage.html", stock = stockname,
                                                                     quality="high",
                                                                     name=IM.getName(stockname),
                                                                     wikiarticle=SI.getWikiArticle(stockname),
-                                                                    stocktrend=stockTrend))
+                                                                    indicators=indicators))
 
     #Decide whether this request needs a new sessionID
     currentSessionID = request.cookies.get('sessionID', default="")
