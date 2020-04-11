@@ -21,12 +21,12 @@ def isExpired(data : dict):
         return True
     return expiredStatus
 
-def putExpirationDate(data: dict) -> None:
+def putExpirationDate(data: dict, timeMultiplier:float = 1) -> None:
     """
     Mutates the dict so that it has a correct expiration date
     """
     try:
-        expirationDiff = spoilTimes[data["timeframe"]] * spoilTimeConversion
+        expirationDiff = spoilTimes[data["timeframe"]] * spoilTimeConversion * timeMultiplier
     except KeyError:
         print("The data does not have a timeframe, cannot put an expiration date on it.")
         return

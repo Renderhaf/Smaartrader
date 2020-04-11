@@ -69,14 +69,14 @@ def test_store_ls():
 
     isStore = True
     try:
-        LM.putData(RARE_STOCK_NAME, "candle", candle)
+        LM.putData(RARE_STOCK_NAME, candle)
     except:
         isStore = False
 
     assert isStore
 
 def test_get_ls():
-    data = LM.getData(RARE_STOCK_NAME, "candle", "Y").keys()
+    data = LM.getData(RARE_STOCK_NAME, "Y").keys()
     assert len(data) != 0
 
 '''

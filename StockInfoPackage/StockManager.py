@@ -25,7 +25,6 @@ def getRawQuote( symbol) -> dict:
         dict -- the quote
     """
     req = requests.get(request.format('quote','symbol='+symbol))
-    print("quote for " + symbol + "is: ", req.text)
     try:
         return req.json()
     except json.JSONDecodeError:
