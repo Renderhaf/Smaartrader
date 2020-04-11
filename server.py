@@ -121,6 +121,8 @@ def singleStockPage(stockname):
     currentSMA, stockPrice = SI.getCurrentSMA(stockname, sampleSize, returnPrice=True)
     currentEMA = SI.getCurrentEMA(stockname, sampleSize)
 
+    # Indicator Name | Indicator Value | is Indicator giving a positive view
+
     indicators = [["Trend (10 Days)", stockTrend, stockTrend > 0], 
                     ["SMA (25 Days)", currentSMA, currentSMA < stockPrice],
                     ["EMA (25 Days)", currentEMA, currentEMA < stockPrice]]
