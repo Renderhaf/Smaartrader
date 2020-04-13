@@ -1,0 +1,11 @@
+body{
+  /* font-family: "Courier"; */
+  /* font-family: 'Trebuchet MS', 'Verdana'; Default */
+  font-family: 'Verdana', 'Trebuchet MS';
+  overflow-x: hidden;
+}
+
+.zoomGraph{
+  transform: scale(1);
+  transition: all 0.5s ease-in-out;
+} 
