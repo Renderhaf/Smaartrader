@@ -2,7 +2,8 @@ from flask import Flask
 import os
 import sys
 
-app = Flask(__name__)
+app = Flask(__name__,static_folder='web/static',
+                    template_folder='web/templates')
 
 sys.path.append("./views")
 import Index

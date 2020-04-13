@@ -214,7 +214,7 @@
                                         <ul class = "pl-0" id="graphList" style="list-style-type: none;">
                                             {%for graph in graphs%}
                                                 <span class="h5">{{graph.0}}</span>
-                                                <input class="graphCheckBox" type="checkbox" onchange="updateGraph({{loop.index0}}, this.checked)"></input>
+                                                <input class="graphCheckBox " type="checkbox" onchange="updateGraph({{loop.index0}}, this.checked)"></input>
                                                 <span> </span>
                                             {%endfor%}
                                         </ul>
