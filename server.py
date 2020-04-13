@@ -8,7 +8,7 @@ sys.path.append("./views")
 import Index
 import StockPage
 
-app.config['DEBUG'] = False
+app.config['DEBUG'] = True
 app.config['HOST'] = 'localhost'
 
 if __name__ == "__main__":
