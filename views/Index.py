@@ -85,7 +85,7 @@ def indexWithQuality(quality):
     if len(viewedStocks) > 10:
         response =  render_template("oneRequestIndex.html", stocks = viewedStocks, quality=workingQuality)
     else:
-        response =  render_template("threadedRequestIndex.html", stocks = viewedStocks, quality=workingQuality)
+        response =  render_template("threadedRequestIndex.html", stocks = viewedStocks, quality=workingQuality, delayStep=200)
 
     response = make_response(response)
 

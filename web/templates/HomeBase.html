@@ -69,7 +69,10 @@
             {% endif %}
 
             {%block after_script%}{%endblock%}
+            <p class="ml-4 footer-text">Created by <a class="unstyled-link" href="http://dvir.herokuapp.com">Dvir Akerman</a> and <span class="unstyled-link">Shilo Daum</span></p>
         </div>
+
+
         <script>
             //Simulate a form in the search break
             var input = document.getElementById("stockFormName");
@@ -109,10 +112,6 @@
             searchBar.addEventListener("input", function(){
                 searchBar.value = searchBar.value.toUpperCase();
             });
-
-            setTimeout(()=>{
-                document.getElementsByClassName(body)[0].style.zoom = 100;
-            }, 50)
         </script>
     </body>
 {%endblock%}

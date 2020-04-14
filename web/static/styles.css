@@ -9,3 +9,13 @@ body{
   transform: scale(1);
   transition: all 0.5s ease-in-out;
 } 
+
+.footer-text{
+  font-size: small !important;
+  color: rgba(0,0,0,0.6);
+}
+
+.unstyled-link{
+  color: rgba(0,0,0,0.6);
+  text-decoration: underline !important;
+}
