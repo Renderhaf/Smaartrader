@@ -13,10 +13,10 @@
 
 {%block per_stock_script%}
 <script>
-    var {{stock}}BorderColor = "";
-    var {{stock}}BackColor = "";
-    var {{stock}}Chart;
-    var {{stock}}ctx;
+    var BorderColor{{loop.index0}} = "";
+    var BackColor{{loop.index0}} = "";
+    var Chart{{loop.index0}};
+    var ctx{{loop.index0}};
     
     //make an HTTP post request to the server, asking for the candle and quote data
     postRequests.push(
@@ -46,16 +46,16 @@
 
                     //Change the graph colors based on the diff from the quote
                     if (parseFloat(stockDiff) > 0){
-                        {{stock}}BorderColor = 'rgba(21, 255, 132, 1)';
-                        {{stock}}BackColor = 'rgba(21, 255, 132, 0.2)';
+                        BorderColor{{loop.index0}} = 'rgba(21, 255, 132, 1)';
+                        BackColor{{loop.index0}} = 'rgba(21, 255, 132, 0.2)';
                     } else {
-                        {{stock}}BorderColor = 'rgba(255, 99, 132, 1)';
-                        {{stock}}BackColor = 'rgba(255, 99, 132, 0.2)';
+                        BorderColor{{loop.index0}} = 'rgba(255, 99, 132, 1)';
+                        BackColor{{loop.index0}} = 'rgba(255, 99, 132, 0.2)';
                     }
                     
                     //Init the stock chart 
-                    {{stock}}ctx = document.getElementById('{{stock}}-chart').getContext('2d');
-                    {{stock}}Chart = startChart({{stock}}ctx, stockData["prices"], stockData["dates"], {{stock}}BackColor, {{stock}}BorderColor);
+                    ctx{{loop.index0}} = document.getElementById('{{stock}}-chart').getContext('2d');
+                    Chart{{loop.index0}} = startChart(ctx{{loop.index0}}, stockData["prices"], stockData["dates"], BackColor{{loop.index0}}, BorderColor{{loop.index0}});
                     
                 })}, delayTime
             )
@@ -67,8 +67,8 @@
 
 
     //A function that passes the jinja information to a normal javascript function
-    function {{stock}}selectTime(btn){
-        selectTime(btn, {{stock}}Chart, {{stock}}ctx, {{stock}}BackColor, {{stock}}BorderColor);
+    function selectTime{{loop.index0}}(btn){
+        selectTime(btn, Chart{{loop.index0}}, ctx{{loop.index0}}, BackColor{{loop.index0}}, BorderColor{{loop.index0}});
     }
 </script>
 {%endblock%}

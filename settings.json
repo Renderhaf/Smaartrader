@@ -1,4 +1,4 @@
 {
-    "companies": ["AAPL", "GOOGL", "TEVA", "TSLA", "AMZN", "INTC"],
+    "companies": ["AAPL", "GOOGL", "TEVA", "TSLA", "^GSPC", "INTC"],
     "mobilePlatforms" : ["android", "iphone"]
 }

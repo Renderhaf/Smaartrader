@@ -8,7 +8,7 @@ import WebSecurity
 WebSecurity.resetStorage()
 
 sys.path.insert(1, './StockInfoPackage/')
-import InfoManager as IM
+import StockInfoPackage.InfoManager as IM
 
 
 with open("settings.json", "r") as file:
@@ -79,13 +79,14 @@ def index():
 @app.route("/home/<quality>", methods = ["GET"])
 def indexWithQuality(quality):
     viewedStocks = companies
+    viewedStockNames = [' '.join(IM.getName(ticker).split(" ")[:2]) for ticker in viewedStocks]
     response = ""
     workingQuality = quality if quality in ["high", "low"] else "high"
 
     if len(viewedStocks) > 10:
-        response =  render_template("oneRequestIndex.html", stocks = viewedStocks, quality=workingQuality)
+        response =  render_template("oneRequestIndex.html", stocks = viewedStocks, quality=workingQuality, stocknames=viewedStockNames)
     else:
-        response =  render_template("threadedRequestIndex.html", stocks = viewedStocks, quality=workingQuality, delayStep=200)
+        response =  render_template("threadedRequestIndex.html", stocks = viewedStocks, quality=workingQuality, delayStep=200, stocknames=viewedStockNames)
 
     response = make_response(response)
 
