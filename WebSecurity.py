@@ -6,7 +6,7 @@ import json
 storeLocation = "./sessionStorage.json"
 sessionLifetime = 12 * 60 * 60 #12 hours
 
-normalCharsKey = "abcdefghijklmnopqrstuvwxyz0123456789-."
+normalCharsKey = "abcdefghijklmnopqrstuvwxyz0123456789-.^"
 
 def getNewSessionID(lifetime: int = sessionLifetime)->str:
     token = secrets.token_hex(32)

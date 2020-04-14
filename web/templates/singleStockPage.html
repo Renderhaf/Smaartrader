@@ -4,22 +4,20 @@
 {% endblock %}
 {%block body%}
     <body class="container-fluid pt-3">
-        <div class="row">
-            <div class="col-12 text-center">
-                <p class="h3">Name: {{name}}</p>
-            </div>
-        </div>
-        
         <div class="row d-flex justify-content-center main-row">
             <div class="col-lg-4 p-3 col-12 d-block">
                 <div class ="container p-3 zoomGraph" style="border: 1px solid black;">
                     <div class="row">
                         <!-- d-flex justify-content-center justify-content-md-left pb-3 pb-md-0 mb-3 mb-md-0 nametag -->
-                        <div class="pr-0 col-12 col-md-2 col-lg-12">
+                        <div class="pr-0 col-6">
                             <p style="white-space: nowrap;"><span>{{stock}}</span> <span id="{{stock}}DiffArrow"></span></p>
                         </div>
 
-                        <div class="col-xs-1 col-2 d-block d-md-none d-lg-block">
+                        <div class="col-6 text-right" style="color:rgba(50,50,50,1)">
+                            <p>{{name}}</p>
+                        </div>
+
+                        <div class="col-xs-1 col-2 d-block">
                             <!--Filler Div-->
                         </div>
                         <div class="col-2">
@@ -34,10 +32,10 @@
                         
                         <div class="col-3 mr-0 pr-0 col-md-4 pl-3">
                             <div class="btn-group" data="{{stock}}">
-                                <div class="btn btn-primary" onclick="{{stock}}selectTime(this, true)">Y</div>
-                                <div class="btn btn-secondary" onclick="{{stock}}selectTime(this)">M</div>
-                                <div class="btn btn-secondary d-none d-lg-block" onclick="{{stock}}selectTime(this)">W</div>
-                                <div class="btn btn-secondary" onclick="{{stock}}selectTime(this)">D</div>
+                                <div class="btn btn-primary" onclick="elementSelectTime(this, true)">Y</div>
+                                <div class="btn btn-secondary" onclick="elementSelectTime(this)">M</div>
+                                <div class="btn btn-secondary d-none d-lg-block" onclick="elementSelectTime(this)">W</div>
+                                <div class="btn btn-secondary" onclick="elementSelectTime(this)">D</div>
                             </div>
                         </div>
                     </div>
@@ -134,7 +132,7 @@
                                 });
                                 
                                 //A function that passes the jinja information to a normal javascript function
-                                function {{stock}}selectTime(btn, isMain=false){
+                                function elementSelectTime(btn, isMain=false){
                                     selectTime(btn, mainChart, ctx, BackColor, BorderColor, isMain);
 
                                     if (!isMain){
