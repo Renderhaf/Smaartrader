@@ -3,7 +3,7 @@
     <body>
         <div class="row">
             <div class="col-12 col-md-6">
-                <p class="h1 m-3" style="font-family: 'Courier New';">Welcome to Smaartrader</p>
+                <p class="h1 m-3 welcomeText">Welcome to Smaartrader</p>
             </div>
 
             <div class="col-0 col-md-2"></div>
@@ -30,19 +30,17 @@
             {% if stocks %}
                 {% for stock in stocks %}
                     <div class="col-md-6 col-lg-4 p-3 col-sm-12">
-                        <div class = "p-3 zoomGraph" style="border: 1px solid black;">
+                        <div class = "p-3 zoomGraph mb-0" style="border: 1px solid black;">
                             <div class="row">
                                 <div class="pr-0 col-6" onclick="window.location='/stock/{{stock}}'" style="cursor:pointer">
                                     <p style="white-space: nowrap;"><span>{{stock}}</span> <span id="{{stock}}DiffArrow"></span></p>
                                 </div>
 
-                                <div class="col-6 text-right" style="color:rgba(50,50,50,1)">
+                                <div class="col-6 text-right" style="color:rgba(50,50,50,1); white-space: nowrap;">
                                     <p>{{stocknames[loop.index0]}}</p>
-                                </div>
-
-                                <div class="col-xs-1 col-2 d-block">
-                                    <!--Filler Div-->
-                                </div>
+                                </div> 
+                            </div>
+                            <div class="row justify-content-center">
                                 <div class="col-2">
                                     <span id="{{stock}}Price"></span>
                                 </div>
@@ -53,7 +51,7 @@
                                     <span id="{{stock}}percent"></span>
                                 </div>
                                
-                                <div class="col-3 mr-0 pr-0 col-md-4 pl-3">
+                                <div class="col-3 col-md-4 mr-3">
                                     <div class="btn-group" data="{{stock}}">
                                         <div class="btn btn-primary" onclick="selectTime{{loop.index0}}(this)">Y</div>
                                         <div class="btn btn-secondary" onclick="selectTime{{loop.index0}}(this)">M</div>
@@ -62,7 +60,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row p-1">
+                            <div class="row p-1 mb-0">
                                 <canvas id="{{stock}}-chart" width="400" height="400"></canvas>
                                 {%block per_stock_script scoped%}{%endblock%}
                             </div>

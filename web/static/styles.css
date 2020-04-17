@@ -1,13 +1,15 @@
 body{
   /* font-family: "Courier"; */
   /* font-family: 'Trebuchet MS', 'Verdana'; Default */
-  font-family: 'Verdana', 'Trebuchet MS';
+  font-family: 'Rubik', 'Roboto Slab', 'Verdana', 'Trebuchet MS';
   overflow-x: hidden;
+  /* background-color: #eeeeee; */
 }
 
 .zoomGraph{
   transform: scale(1);
   transition: all 0.5s ease-in-out;
+  /* background-color: #ffffff; */
 } 
 
 .footer-text{
@@ -18,4 +20,8 @@ body{
 .unstyled-link{
   color: rgba(0,0,0,0.6);
   text-decoration: underline !important;
+}
+
+.welcomeText{
+  font-family: 'Rubik', 'Courier New';
 }
