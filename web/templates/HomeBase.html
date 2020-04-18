@@ -29,10 +29,10 @@
             <!-- Repeates for every stock -->
             {% if stocks %}
                 {% for stock in stocks %}
-                    <div class="col-md-6 col-lg-4 p-3 col-sm-12">
+                    <div class="col-md-6 col-xl-4 p-3 col-sm-12">
                         <div class = "p-3 zoomGraph mb-0" style="border: 1px solid black;">
                             <div class="row">
-                                <div class="pr-0 col-4" onclick="window.location='/stock/{{stock}}'" style="cursor:pointer;">
+                                <div class="pr-0 col-4" onclick="window.location='/stock/{{stock}}'" style="cursor:pointer;" data-toggle="tooltip" title="{{stock}}">
                                     <p style="white-space: nowrap;"><span>{{stocknames[loop.index0]}}</span> <span id="{{stock}}DiffArrow"></span></p>
                                 </div>
 
