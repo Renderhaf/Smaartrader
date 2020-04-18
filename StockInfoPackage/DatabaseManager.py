@@ -1,7 +1,10 @@
 import pymongo
 import DataValidator as DV
+import os
 
-client = pymongo.MongoClient("mongodb+srv://StockManager:Manage123@maincluster-zlnck.mongodb.net/test?retryWrites=true&w=majority")
+MONGODB_KEY = os.getenv("MONGODB_KEY")
+client = pymongo.MongoClient("mongodb+srv://{}@maincluster-zlnck.mongodb.net/test?retryWrites=true&w=majority".format(MONGODB_KEY))
+
 database = client.get_database("StocksInfo")
 
 def storeData(symbol:str, data:dict, quality='high')->None:

@@ -86,7 +86,6 @@ def candleDatabaseState(symbol, timeframe,quality=default_quality):
     return data
 
 candleStateOrder = [candleLocalStorageState, candleStockAPIState, candleDatabaseState]
-candleStateOrder = [candleDatabaseState]
 
 '''
 States and state oreder for quote supplier
@@ -120,7 +119,6 @@ def quoteDatabaseState(symbol):
     return data
 
 quoteStateOrder = [quoteLocalState, quoteStockState, quoteDatabaseState]
-quoteStateOrder = [quoteDatabaseState]
 
 '''
 Suppliers
