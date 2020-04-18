@@ -37,6 +37,14 @@ def getCandle(stock: str, timeframe: str = "Y", quality:str = "high")->dict:
 def getQuote(stock: str)->dict:
     return IM.getQuote(request.form["name"])
 
+def getViewableName(ticker: str, maxLength = 13)->str:
+    rawName = IM.getName(ticker)
+    splitName = rawName.split(" ")
+    for i in range(len(splitName)-1):
+        if len(" ".join(splitName)) > maxLength:
+            splitName.pop()
+    return " ".join(splitName)
+
 @app.route("/", methods = ["GET", "POST"])
 def index():
     if request.method == "POST": #POST
@@ -79,7 +87,8 @@ def index():
 @app.route("/home/<quality>", methods = ["GET"])
 def indexWithQuality(quality):
     viewedStocks = companies
-    viewedStockNames = [' '.join(IM.getName(ticker).split(" ")[:2]) for ticker in viewedStocks]
+    viewedStockNames = [getViewableName(ticker) for ticker in viewedStocks]
+
     response = ""
     workingQuality = quality if quality in ["high", "low"] else "high"
 
