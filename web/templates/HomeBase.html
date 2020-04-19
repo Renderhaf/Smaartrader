@@ -26,8 +26,19 @@
 
             <div class="col-12 col-md-2 pr-0 pr-md-3">
                 <div class="input-group pr-2 pl-2 pt-4" id="searchForm">
+
                     <div class="input-group-prepend">
-                      <button class="btn btn-outline-dark" type="button" id="searchBtn" onclick="searchStock()">Search</button>
+                        <div class="d-md-none pr-1">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{selectedCategory}}
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                {%for category in otherCategories%}
+                                    <a class="dropdown-item category-item" href="#" onclick="changeCategory(this.innerHTML)">{{category}}</a>
+                                {%endfor%}
+                            </div>
+                        </div>
+                        <button class="btn btn-outline-dark searchBtn" type="button" id="searchBtn" onclick="searchStock()">Search</button>
                     </div>
                     <input autocomplete="off" form = "searchForm" type="text" class="form-control" placeholder="" id="stockFormName">
                 </form>
