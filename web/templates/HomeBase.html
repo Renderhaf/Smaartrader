@@ -2,7 +2,7 @@
 {%block body%}
     <body>
         <div class="row">
-            <div class="col-12 col-md-6 ">
+            <div class="col-12 col-md-8">
                 <p class="h1 welcomeText m-3">Welcome to Smaartrader</p>
                 <div class="dropdown d-none d-md-block">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -10,13 +10,12 @@
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         {%for category in otherCategories%}
-                            <a class="dropdown-item category-item" href="#">{{category}}</a>
+                            <a class="dropdown-item category-item" href="#" onclick="changeCategory(this.innerHTML)">{{category}}</a>
                         {%endfor%}
                     </div>
                 </div>
             </div>
 
-            <div class="col-0 col-md-2"></div>
 
             <div class="col-12 col-md-2">
                 <div class="alert alert-warning mt-4 mr-4 ml-4 mr-md-0 ml-md-0 d-none" id="searchAlert" role="alert">
@@ -132,6 +131,19 @@
             searchBar.addEventListener("input", function(){
                 searchBar.value = searchBar.value.toUpperCase();
             });
+
+            function changeCategory(categoryName){
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString)
+
+                if (urlParams.has("category")){
+                    urlParams.set("category", categoryName)
+                } else {
+                    urlParams.append("category", categoryName)
+                }
+
+                window.location.search = urlParams.toString();
+            }
         </script>
     </body>
 {%endblock%}

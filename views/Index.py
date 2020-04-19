@@ -20,13 +20,20 @@ with open("settings.json", "r") as file:
 Helper functions for getting inforamtion
 The function names are based on their type in the POST request
 '''
-
+def cleanDataFromObjectID(data: dict):
+    for i in data.keys():
+        if type(data[i]) == 'ObjectId':
+            del data[i]
 
 def getCandlePlusQuote(stock: str, timeframe: str = "Y", quality: str = "high") -> dict:
     data = IM.getQuote(stock)
     candleData = IM.getCandle(stock, timeframe, quality)
     data["prices"] = candleData["c"]
     data["dates"] = [time.ctime(t) for t in candleData["t"]]
+
+    #This should not be here but this bug is driving me insane
+    cleanDataFromObjectID(data)
+            
     return data
 
 
@@ -35,6 +42,7 @@ def getCandle(stock: str, timeframe: str = "Y", quality: str = "high") -> dict:
     prices = stockData["c"]
     dates = [time.ctime(t) for t in stockData["t"]]
     data = {"prices": prices, "dates": dates}
+
     return data
 
 

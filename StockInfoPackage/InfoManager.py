@@ -162,8 +162,6 @@ def getCandle(symbol,timeframe='Y', quality=default_quality, forceAPI=False)->di
     for state in candleStateOrder:
         data = state(symbol, timeframe,quality)
         if len(data.keys()) != 0:
-            if "_id" in data.keys():
-                data.pop("_id")
             return data
 
 def getQuote(symbol:str, forceAPI:bool=False)->dict:
@@ -182,8 +180,6 @@ def getQuote(symbol:str, forceAPI:bool=False)->dict:
     for state in quoteStateOrder:
         data = state(symbol)
         if len(data.keys()) != 0:
-            if "_id" in data.keys():
-                data.pop("_id")
             return data
 
 
