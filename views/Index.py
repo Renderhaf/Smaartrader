@@ -13,7 +13,7 @@ import StockInfoPackage.InfoManager as IM
 
 with open("settings.json", "r") as file:
     data = json.loads(file.read())
-    companies = data["companies"]
+    categories:dict = data["categories"]
     mobilePlatforms = data["mobilePlatforms"]
 
 '''
@@ -44,6 +44,12 @@ def getViewableName(ticker: str, maxLength = 13)->str:
         if len(" ".join(splitName)) > maxLength:
             splitName.pop()
     return " ".join(splitName)
+
+def getCategory(name: str)->list:
+    if name in categories.keys():
+        return categories.get(name)
+    else:
+        return categories.get("IT")
 
 @app.route("/", methods = ["GET", "POST"])
 def index():
@@ -81,12 +87,15 @@ def index():
 
     else:
         if request.user_agent.platform in mobilePlatforms:
-            return redirect("/home/low")
-        return redirect("/home/high")
+            return redirect("/home?quality=low")
+        return redirect("/home?quality=high")
 
-@app.route("/home/<quality>", methods = ["GET"])
-def indexWithQuality(quality):
-    viewedStocks = companies
+@app.route("/home/", methods = ["GET"])
+def indexWithQuality():
+    quality = request.args.get("quality", default="high")
+    category = request.args.get("category", default="IT")
+
+    viewedStocks = getCategory(category)
     viewedStockNames = [getViewableName(ticker) for ticker in viewedStocks]
 
     response = ""

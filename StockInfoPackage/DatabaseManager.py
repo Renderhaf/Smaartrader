@@ -59,7 +59,7 @@ def getData(symbol:str, timeframe:str,quality:str='high')->dict:
 def test():
     # storeData("GOOGL", {"prices": [1,2,3,4], "timeframe": "Y"})
     # removeData("GOOGL", "Y")
-    print(getData("GM", "Y"))
+    print(getData("^GAPX", "Y"))
 
 if __name__ == "__main__":
     test()
