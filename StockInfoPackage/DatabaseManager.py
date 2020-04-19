@@ -54,7 +54,9 @@ def getData(symbol:str, timeframe:str,quality:str='high')->dict:
     if len(data) == 0:
         return {}
     else:
-        return data[0]
+        objectData = data[0]
+    objectData.pop("_id")
+    return objectData
 
 def test():
     # storeData("GOOGL", {"prices": [1,2,3,4], "timeframe": "Y"})

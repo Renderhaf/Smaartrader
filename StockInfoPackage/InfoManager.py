@@ -82,7 +82,6 @@ def candleDatabaseState(symbol, timeframe,quality=default_quality):
         print("{} : Entered database candle state".format(symbol))
 
     data = getDBData(symbol, timeframe, quality)
-    removeKey(data, "_id")
     return data
 
 candleStateOrder = [candleLocalStorageState, candleStockAPIState, candleDatabaseState]
@@ -115,7 +114,6 @@ def quoteDatabaseState(symbol):
     if DEBUG:
         print("{} : Entered database quote state".format(symbol))
     data = getDBData(symbol, "Q", "high")
-    removeKey(data, "_id")
     return data
 
 quoteStateOrder = [quoteLocalState, quoteStockState, quoteDatabaseState]
