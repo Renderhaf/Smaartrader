@@ -37,7 +37,7 @@ def singleStockPage(stockname):
                 
     response = make_response(render_template("singleStockPage.html", stock = stockname,
                                                                     quality="high",
-                                                                    name=IM.getName(stockname),
+                                                                    name=" ".join(IM.getName(stockname).split(" ")[:2]),
                                                                     wikiarticle=SI.getWikiArticle(stockname),
                                                                     indicators=indicators,
                                                                     graphs=graphs))

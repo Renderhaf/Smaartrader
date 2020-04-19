@@ -1,4 +1,9 @@
 {
-    "companies": ["AAPL", "GOOGL", "TEVA", "TSLA", "^GSPC", "INTC"],
+    "categories": {
+        "IT": ["AAPL", "GOOGL", "MSFT", "TSLA", "NFLX", "INTC"],
+        "FINANCE": ["BAC", "WFC", "C", "JPM", "SCHW", "AXP"],
+        "HEALTH": ["TEVA","ABT","CVS","GILD","PFE","JNJ"],
+        "INDICIES": ["^GSPC", "^DJI", "^IXIC", "^VIX", "^STI", "^GDAXI"]
+    },
     "mobilePlatforms" : ["android", "iphone"]
 }
