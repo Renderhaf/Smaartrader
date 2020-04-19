@@ -24,4 +24,19 @@ body{
 
 .welcomeText{
   font-family: 'Rubik', 'Courier New';
+  float: left;
+}
+
+.dropdown{
+  margin-top: 1.5rem !important;
+}
+
+.btn-stretch{
+  width: 100% !important;
+}
+
+.middle-div{
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }

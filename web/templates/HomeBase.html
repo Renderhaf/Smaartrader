@@ -2,8 +2,18 @@
 {%block body%}
     <body>
         <div class="row">
-            <div class="col-12 col-md-6">
-                <p class="h1 m-3 welcomeText">Welcome to Smaartrader</p>
+            <div class="col-12 col-md-6 ">
+                <p class="h1 welcomeText m-3">Welcome to Smaartrader</p>
+                <div class="dropdown d-none d-md-block">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{selectedCategory}}
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        {%for category in otherCategories%}
+                            <a class="dropdown-item category-item" href="#">{{category}}</a>
+                        {%endfor%}
+                    </div>
+                </div>
             </div>
 
             <div class="col-0 col-md-2"></div>
@@ -13,6 +23,7 @@
                     <span id="alertContent"></span>
                 </div>
             </div>
+
 
             <div class="col-12 col-md-2 pr-0 pr-md-3">
                 <div class="input-group pr-2 pl-2 pt-4" id="searchForm">
