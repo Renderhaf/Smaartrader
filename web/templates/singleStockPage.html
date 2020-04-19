@@ -8,18 +8,15 @@
             <div class="col-lg-4 p-3 col-12 d-block">
                 <div class ="container p-3 zoomGraph" style="border: 1px solid black;">
                     <div class="row">
-                        <!-- d-flex justify-content-center justify-content-md-left pb-3 pb-md-0 mb-3 mb-md-0 nametag -->
-                        <div class="pr-0 col-6">
+                        <div class="pr-0 col-3">
                             <p style="white-space: nowrap;"><span>{{stock}}</span> <span id="{{stock}}DiffArrow"></span></p>
                         </div>
 
-                        <div class="col-6 text-right" style="color:rgba(50,50,50,1)">
+                        <div class="col-9 text-right" style="color:rgba(50,50,50,1)">
                             <p>{{name}}</p>
                         </div>
-
-                        <div class="col-xs-1 col-2 d-block">
-                            <!--Filler Div-->
-                        </div>
+                    </div>
+                    <div class="row justify-content-center">
                         <div class="col-2">
                             <span id="{{stock}}Price"></span>
                         </div>
@@ -30,7 +27,7 @@
                             <span id="{{stock}}percent"></span>
                         </div>
                         
-                        <div class="col-3 mr-0 pr-0 col-md-4 pl-3">
+                        <div class="col-3 mr-0 pr-0 col-md-4">
                             <div class="btn-group" data="{{stock}}">
                                 <div class="btn btn-primary" onclick="elementSelectTime(this, true)">Y</div>
                                 <div class="btn btn-secondary" onclick="elementSelectTime(this)">M</div>
