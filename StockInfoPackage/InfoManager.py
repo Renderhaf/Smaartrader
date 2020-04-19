@@ -32,6 +32,14 @@ def isAnExistingTicker(ticker:str)->bool:
     '''
     return ticker in tickerData.keys()
 
+'''
+Helper Functions
+'''
+def removeKey(data:dict, key:str)->None:
+    try:
+        data.pop(key)
+    except Exception:
+        return
 
 '''
 States and state order for candle supplier
@@ -72,10 +80,11 @@ def candleLocalStorageState(symbol, timeframe, quality=default_quality):
 def candleDatabaseState(symbol, timeframe,quality=default_quality):
     if DEBUG:
         print("{} : Entered database candle state".format(symbol))
-    return getDBData(symbol, timeframe, quality)
+
+    data = getDBData(symbol, timeframe, quality)
+    return data
 
 candleStateOrder = [candleLocalStorageState, candleStockAPIState, candleDatabaseState]
-
 
 '''
 States and state oreder for quote supplier
@@ -100,13 +109,14 @@ def quoteLocalState(symbol):
         print("{} : Entered local quote state".format(symbol))
     return LM.getData(symbol, "Q", "high")
 
+
 def quoteDatabaseState(symbol):
     if DEBUG:
-        print("{} : Entered local database state".format(symbol))
-    return getDBData(symbol, "Q", "high")
+        print("{} : Entered database quote state".format(symbol))
+    data = getDBData(symbol, "Q", "high")
+    return data
 
 quoteStateOrder = [quoteLocalState, quoteStockState, quoteDatabaseState]
-
 
 '''
 Suppliers
@@ -232,7 +242,9 @@ def updateDBFromData(data, symbol,timeframe='Y', quality=default_quality)->None:
 
 
 def main():
-    print(len(getCandle('AAPL', 'D')['c']))
+    STOCKNAME = "TSLA"
+    print(getCandle(STOCKNAME, 'Y'))
+    print(getQuote(STOCKNAME))
 
 if __name__ == "__main__":
     main()
