@@ -1,6 +1,7 @@
 import pymongo
 import DataValidator as DV
 import os
+import random
 
 MONGODB_KEY = os.getenv("MONGODB_KEY")
 client = pymongo.MongoClient("mongodb+srv://{}@maincluster-zlnck.mongodb.net/test?retryWrites=true&w=majority".format(MONGODB_KEY))
@@ -15,6 +16,7 @@ def storeData(symbol:str, data:dict, quality='high')->None:
         data {dict} -- [the data to be stored]
     """
     timeframe = data["timeframe"]
+    data["_id"] = random.randint(0,1000000000)
     currentStoredData = getData(symbol, timeframe, quality)
     #If the data is expired, remove it
     if DV.isExpired(currentStoredData):
