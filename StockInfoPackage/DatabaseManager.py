@@ -2,6 +2,7 @@ import pymongo
 import DataValidator as DV
 import os 
 
+
 MONGODB_KEY = os.getenv("MONGODB_KEY")
 client = pymongo.MongoClient("mongodb+srv://{}@maincluster-zlnck.mongodb.net/test?retryWrites=true&w=majority".format(MONGODB_KEY))
 
@@ -54,12 +55,14 @@ def getData(symbol:str, timeframe:str,quality:str='high')->dict:
     if len(data) == 0:
         return {}
     else:
-        return data[0]
+        objectData = data[0]
+    objectData.pop("_id")
+    return objectData
 
 def test():
     # storeData("GOOGL", {"prices": [1,2,3,4], "timeframe": "Y"})
     # removeData("GOOGL", "Y")
-    print(getData("^GAPX", "Y"))
+    print(getData("TSLA", "Y"))
 
 if __name__ == "__main__":
     test()
