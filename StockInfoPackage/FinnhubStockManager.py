@@ -137,7 +137,7 @@ def getCandle(symbol,resolution='D',count=365)->dict:
 
 def main():
     # printGraph('AAPL','D',30)
-    print(getQuote("^GSPC"))
+    print(getCandle("AAPL"))
 
 """print stocks data graph
 """
