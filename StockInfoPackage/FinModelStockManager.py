@@ -33,7 +33,6 @@ def getAllHistoricData(symbol:str, quality='high')->dict:
     t = [day["date"] for day in data['historical']]
 
     if isIndex:
-        print('INDEXXXXX')
         c = c[::-1]
         t = t[::-1]
     
