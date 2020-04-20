@@ -8,6 +8,7 @@ app = Flask(__name__,static_folder='web/static',
 sys.path.append("./views")
 import Index
 import StockPage
+import StockAPI
 
 app.config['DEBUG'] = True
 app.config['HOST'] = 'localhost'
