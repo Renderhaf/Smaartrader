@@ -130,16 +130,16 @@ def getStockCandle(symbol,timeframe='Y', quality=default_quality, timeMul=0)->di
     Returns:
         dict -- candle
     """
+    qualities={'high':{'TTR':{'Y':'D','M':'D','W':30,'D':5},'TTC':{'Y':365,'M':30,'W':336,'D':288}},
+           'low':{'TTR':{'Y':'W','M':'D','W':60,'D':30},'TTC':{'Y':52,'M':30,'W':168,'D':48}}}
 
-    if quality == 'A':
+    if timeframe == 'A':
         if quality in qualities.keys():
             return NSM.getAllHistoricData(symbol, quality)
         else:
             return NSM.getAllHistoricData(symbol, default_quality)
 
 
-    qualities={'high':{'TTR':{'Y':'D','M':'D','W':30,'D':5},'TTC':{'Y':365,'M':30,'W':336,'D':288}},
-           'low':{'TTR':{'Y':'W','M':'D','W':60,'D':30},'TTC':{'Y':52,'M':30,'W':168,'D':48}}}
 
     timeToResolution={'Y':'D','M':'D','W':30,'D':5}
 
@@ -253,8 +253,9 @@ def updateDBFromData(data, symbol,timeframe='Y', quality=default_quality)->None:
 
 def main():
     STOCKNAME = "TSLA"
-    print(getCandle(STOCKNAME, 'Y'))
-    print(getQuote(STOCKNAME))
+
+    print(len(getCandle(STOCKNAME, 'A', quality="high")['c']))
+    # print(getQuote(STOCKNAME))
 
 if __name__ == "__main__":
     main()

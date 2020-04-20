@@ -15,6 +15,11 @@ import StockInfoPackage.InfoManager as IM
 Helper functions for getting inforamtion
 The function names are based on their type in the POST request
 '''
+def makeTimeReadable(data: dict):
+    if type(data['dates'][0]) == int:
+        data["dates"] = [time.ctime(t) for t in data["dates"]]  
+
+
 def cleanDataFromObjectID(data: dict):
     for i in data.keys():
         if type(data[i]) == 'ObjectId':
@@ -24,7 +29,9 @@ def getCandlePlusQuote(stock: str, timeframe: str = "Y", quality: str = "high") 
     data = IM.getQuote(stock)
     candleData = IM.getCandle(stock, timeframe, quality)
     data["prices"] = candleData["c"]
-    data["dates"] = [time.ctime(t) for t in candleData["t"]] if type(candleData['t'][0]) == int else [t for t in candleData["t"]]
+    data['dates'] = candleData['t']
+
+    makeTimeReadable(data)
 
     #This should not be here but this bug is driving me insane
     cleanDataFromObjectID(data)
@@ -35,8 +42,12 @@ def getCandlePlusQuote(stock: str, timeframe: str = "Y", quality: str = "high") 
 def getCandle(stock: str, timeframe: str = "Y", quality: str = "high") -> dict:
     stockData = IM.getCandle(stock, timeframe, quality)
     prices = stockData["c"]
-    dates = [time.ctime(t) for t in stockData["t"]]
-    data = {"prices": prices, "dates": dates}
+    dates = stockData["t"]
+    data = {"prices": prices, 'dates': dates}
+
+    makeTimeReadable(data)
+
+    print("LEN IS {}".format(len(data['prices'])))
 
     return data
 
@@ -71,9 +82,9 @@ def StockAPI():
         if request.form["type"] == "quote":
             return getQuote(request.form["name"])
 
-    except Exception as err:
-        print("Internal Server Error: ", err)
-        return "Internal Server Error", 500  # Internal Server Error Status Code
+    # except Exception as err:
+    #     print("Internal Server Error: ", err)
+    #     return "Internal Server Error", 500  # Internal Server Error Status Code
 
     except KeyError:
         pass
