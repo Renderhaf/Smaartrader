@@ -3,8 +3,10 @@ import DataValidator as DV
 import os
 import random
 
+print("Connecting to Atlas....")
 MONGODB_KEY = os.getenv("MONGODB_KEY")
 client = pymongo.MongoClient("mongodb+srv://{}@maincluster-zlnck.mongodb.net/test?retryWrites=true&w=majority".format(MONGODB_KEY))
+print("Connected to Atlas!")
 
 database = client.get_database("StocksInfo")
 
