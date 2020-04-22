@@ -13,7 +13,7 @@
                         </div>
 
                         <div class="col-9 text-right" style="color:rgba(50,50,50,1)">
-                            <p>{{name}}</p>
+                            <p class="name-text">{{name}}</p>
                         </div>
                     </div>
                     <div class="row justify-content-center">
@@ -185,7 +185,7 @@
                             </h5>
                         </div>
 
-                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div id="collapseOne" class="collapse wiki-collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                             <div class="card-body p-0">
                                 <div class="embed-responsive side-info">
                                     <iframe class="embed-responsive-item" src="{{wikiarticle}}"></iframe>
@@ -328,6 +328,7 @@
 
         $(document).ready(function() {
             $(".side-info").css("height", $(".main-row").height());
+            $(".wiki-collapse").css("height", $(".main-row").height());
         });
     </script>
 {% endblock %}
