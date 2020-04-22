@@ -21,7 +21,7 @@ def getWikiArticle(ticker: str) -> str:
 
     try:
         wikilink = requests.get(url).json()[-1][0].replace("en.", "en.m.")
-    except IndexError:
+    except Exception:
         return defaultArticle
     return wikilink
 

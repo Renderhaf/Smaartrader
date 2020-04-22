@@ -1,15 +1,16 @@
+:root{
+  --dark-background: #151515;
+  --dark-font-color: #e6e6e6;
+}
+
 body{
-  /* font-family: "Courier"; */
-  /* font-family: 'Trebuchet MS', 'Verdana'; Default */
   font-family: 'Rubik', 'Roboto Slab', 'Verdana', 'Trebuchet MS';
   overflow-x: hidden;
-  /* background-color: #eeeeee; */
 }
 
 .zoomGraph{
   transform: scale(1);
   transition: all 0.5s ease-in-out;
-  /* background-color: #ffffff; */
 } 
 
 .footer-text{
@@ -42,4 +43,57 @@ body{
     border-top-left-radius: 0.25rem !important;
     border-bottom-left-radius: 0.25rem !important;
   }
+}
+
+.accordion{
+  height: 100%;
+  border-bottom: 1px solid rgba(0,0,0,.125);
+}
+
+.top-btn{
+  margin-top: 1.5rem;
+}
+
+/* Dark mode Settings */
+
+.dark{
+  background-color: var(--dark-background);
+  color: var(--dark-font-color);
+}
+
+.dark .form-control, .dark .name-text{
+  background-color: var(--dark-background);
+  color: var(--dark-font-color);
+}
+
+.dark .zoomGraph{
+  border-color: var(--dark-font-color) !important;
+}
+
+.dark .footer-text, .dark .unstyled-link{
+  color: var(--dark-font-color) !important;
+}
+
+.dark .btn-outline-dark{
+  color: var(--dark-font-color) !important;
+  border-color: var(--dark-font-color) !important;
+}
+
+.dark .card-body{
+  background-color: var(--dark-background);
+  color: var(--dark-font-color);
+}
+
+.dark hr{
+  border: 0.75px solid var(--dark-font-color);
+}
+
+.dark .card-header{
+  border-bottom: 2px solid var(--dark-font-color);
+  background-color: var(--dark-background);
+  color: var(--dark-font-color);
+}
+
+.dark .accordion{
+  border-bottom: 1px solid var(--dark-font-color);
 }

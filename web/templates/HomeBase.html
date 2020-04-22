@@ -1,11 +1,15 @@
 {% extends 'GeneralPage.html' %}
 {%block body%}
-    <body>
+    <script
+      src="https://use.fontawesome.com/releases/v5.13.0/js/all.js"
+      data-auto-a11y="true"
+    ></script>
+    <body class="">
         <div class="row">
-            <div class="col-12 col-md-8">
+            <div class="col-12 col-md-8 top-left-section">
                 <p class="h1 welcomeText m-3">Welcome to Smaartrader</p>
-                <div class="dropdown d-none d-md-block">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <div class="dropdown d-none d-md-inline">
+                    <button class="btn btn-secondary dropdown-toggle top-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         {{selectedCategory}}
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -14,6 +18,9 @@
                         {%endfor%}
                     </div>
                 </div>
+                <button class="btn btn-secondary d-md-inline top-btn d-none">
+                    <i class="fas fa-moon theme-icon"  onclick="changeThemeDOM(this)"></i>
+                </button>
             </div>
 
 
@@ -25,7 +32,7 @@
 
 
             <div class="col-12 col-md-2 pr-0 pr-md-3">
-                <div class="input-group pr-2 pl-2 pt-4" id="searchForm">
+                <div class="input-group pr-2 pl-2 pt-4" id="searchForm" style="white-space:nowrap;">
 
                     <div class="input-group-prepend">
                         <div class="d-md-none pr-1">
@@ -40,7 +47,7 @@
                         </div>
                         <button class="btn btn-outline-dark searchBtn" type="button" id="searchBtn" onclick="searchStock()">Search</button>
                     </div>
-                    <input autocomplete="off" form = "searchForm" type="text" class="form-control" placeholder="" id="stockFormName">
+                    <input autocomplete="off" form = "searchForm" type="text" class="form-control" placeholder="" id="stockFormName" style="min-width: 70px;">
                 </form>
             </div>
 
@@ -99,7 +106,11 @@
             {% endif %}
 
             {%block after_script%}{%endblock%}
-            <p class="ml-4 footer-text">Created by <a class="unstyled-link" href="http://dvir.herokuapp.com">Dvir Akerman</a> and <span class="unstyled-link">Shilo Daum</span></p>
+            <p class="ml-4 footer-text">
+                Created by <a class="unstyled-link" href="http://dvir.herokuapp.com">Dvir Akerman</a> and <span class="unstyled-link">Shilo Daum</span>
+                 - <i class="fas fa-moon theme-icon d-md-none d-inline"  onclick="changeThemeDOM(this)"></i>
+            </p>
+            
         </div>
 
 
@@ -155,6 +166,9 @@
 
                 window.location.search = urlParams.toString();
             }
+
+            
         </script>
     </body>
+
 {%endblock%}
