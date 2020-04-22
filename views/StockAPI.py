@@ -47,8 +47,6 @@ def getCandle(stock: str, timeframe: str = "Y", quality: str = "high") -> dict:
 
     makeTimeReadable(data)
 
-    print("LEN IS {}".format(len(data['prices'])))
-
     return data
 
 
