@@ -1,10 +1,10 @@
 const DARK = "dark"
 const LIGHT = "light"
 
-var defaultColor = LIGHT;
+var defaultTheme = LIGHT;
 var body = document.getElementsByTagName("body")[0];
 
-function setColor(color){
+function setTheme(color){
     let classes = body.classList;
     if (!classes.contains(color)){
         classes.forEach(function(className){
@@ -14,21 +14,32 @@ function setColor(color){
         });
         classes.add(color);
 
-        setColorInLocalStorage(color)
+        setThemeInLocalStorage(color)
+    }
+
+    let domBtns = document.getElementsByClassName("theme-icon");
+    for (btn of domBtns){
+        btn.classList.remove("fa-sun", "fa-moon")
+        btn.classList.add(color == DARK ? "fa-sun" : "fa-moon")
     }
 }
 
-function getColorFromLocalStorage(){
+function getThemeFromLocalStorage(){
     color = localStorage.getItem("theme");
     return color;
 }
 
-function setColorInLocalStorage(color){
+function setThemeInLocalStorage(color){
     localStorage.setItem("theme", color)
 }
 
-function getColorFromPreference(){
+function getThemeFromPreference(){
     return (window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches) ? DARK : LIGHT;
 }
 
-setColor(getColorFromLocalStorage() || getColorFromPreference());
+function changeThemeDOM(elem){
+    let theme = elem.classList.contains("fa-sun") ? LIGHT : DARK;
+    setTheme(theme);
+}
+
+setTheme(getThemeFromLocalStorage() || getThemeFromPreference());
