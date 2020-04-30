@@ -102,7 +102,7 @@ def getQuote(symbol):
     data = {
         "current_price":rawData["price"],
         "difference": rawData["change"],
-        "difference_percentage": rawData["changesPercentage"],
+        "difference_percentage": round(rawData["changesPercentage"],3),
         "marketCap": rawData["marketCap"],
         "volume": rawData["volume"]
     }
@@ -111,10 +111,10 @@ def getQuote(symbol):
 
 def main():
     import matplotlib.pyplot as plt
-    print(getQuote("BTCUSD"))
-    # d = getCandle("BTCUSD", "D", "high", True)
-    # plt.plot(d['c'])
-    # plt.show()
+    # print(getQuote("BTCUSD"))
+    d = getAllHistoricData("BTCUSD", "high", True, True)
+    plt.plot(d['c'])
+    plt.show()
     
 
 if __name__ == "__main__":

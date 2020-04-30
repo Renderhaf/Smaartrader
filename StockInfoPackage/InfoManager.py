@@ -90,6 +90,7 @@ def candleDatabaseState(symbol, timeframe,quality=default_quality):
 
 candleStateOrder = [candleLocalStorageState, candleStockAPIState, candleDatabaseState]
 
+
 '''
 States and state oreder for quote supplier
 '''
@@ -140,19 +141,18 @@ def getStockCandle(symbol,timeframe='Y', quality=default_quality, timeMul=0)->di
     """
     qualities={'high':{'TTR':{'Y':'D','M':'D','W':30,'D':5},'TTC':{'Y':365,'M':30,'W':336,'D':288}},
            'low':{'TTR':{'Y':'W','M':'D','W':60,'D':30},'TTC':{'Y':52,'M':30,'W':168,'D':48}}}
+    isCrypto = symbol in cryptoTickers.keys()
 
     if timeframe == 'A':
         if quality in qualities.keys():
-            print(symbol, quality)
-            data = NSM.getAllHistoricData(symbol, quality)
+            data = NSM.getAllHistoricData(symbol, quality, isCrypto=isCrypto)
         else:
-            data = NSM.getAllHistoricData(symbol, default_quality)
-        data["isCrypto"] = True
-
+            data = NSM.getAllHistoricData(symbol, default_quality, isCrypto=isCrypto)
+        return data
 
     timeToResolution={'Y':'D','M':'D','W':30,'D':5}
 
-    if symbol in cryptoTickers.keys():
+    if isCrypto:
         if quality in qualities.keys():
             data = NSM.getCandle(symbol, timeframe, quality, isCrypto=True)
 
@@ -169,7 +169,6 @@ def getStockCandle(symbol,timeframe='Y', quality=default_quality, timeMul=0)->di
                 print('Not a quality')
             data = SM.getCandle(symbol,qualities[default_quality]['TTR'][timeframe],(1 + timeMul)*qualities[default_quality]['TTC'][timeframe])
     
-    data["isCrypto"] = False
     return data
 
 def getStockQuote(symbol)->dict:
