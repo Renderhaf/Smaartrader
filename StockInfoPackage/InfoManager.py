@@ -5,6 +5,7 @@ import LocalDataManager as LM
 import DataValidator as DV
 import threading
 import json
+import os 
 
 regressionLimit = 3
 
@@ -12,13 +13,10 @@ DEBUG = True
 
 default_quality='high'
 
-#Get the list of avilable stocks and their names
-with open("./DataFiles/stockTickers.json", "r") as file1:
-    tickerData:dict = json.loads(file1.read())
-
-#Get the list of avilable cryptos and their names
-with open("./Datafiles/cryptoTickers.json", "r") as file2:
-    cryptoTickers:dict = json.loads(file2.read())
+#Get the list of avilable stocks\cryptos and their names
+with open(os.path.abspath("./Datafiles/stockTickers.json"), "r") as stockFile, open(os.path.abspath("./Datafiles/cryptoTickers.json"), "r") as cryptoFile:
+    tickerData:dict = json.loads(stockFile.read())
+    cryptoTickers:dict = json.loads(cryptoFile.read())
 
 
 def getName(ticker:str)->str:
@@ -278,7 +276,7 @@ def main():
     STOCKNAME = "BTCUSD"
 
     # print(len(getCandle(STOCKNAME, 'D', quality="low")['c']))
-    print(getCandle(STOCKNAME, timeframe="Y"))
+    # print(getCandle(STOCKNAME, timeframe="Y"))
 
 if __name__ == "__main__":
     main()
