@@ -180,7 +180,7 @@
                     <div class="card">
                         <div class="card-header" id="headingOne">
                             <h5 class="mb-0">
-                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <button class="btn btn-link accordion-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                 Wikipedia Article
                                 </button>
                             </h5>
@@ -196,7 +196,7 @@
 
                         <div class="card-header" id="headingTwo">
                             <h5 class="mb-0">
-                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <button class="btn btn-link accordion-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                 Analysis
                                 </button>
                             </h5>
@@ -327,9 +327,25 @@
             chart.update();  
         }
 
+        //Staticaly set the hight of the wikipedia window 
         $(document).ready(function() {
             $(".side-info").css("height", $(".main-row").height());
             $(".wiki-collapse").css("height", $(".main-row").height());
         });
+
+        //Prevent the user from collapsing all accordion windows
+        Array.from(document.getElementsByClassName("accordion-link")).forEach(
+            (elem) => {
+                elem.addEventListener("click", function (event){
+                    let target = elem.getAttribute("data-target");
+                    const targetID = target.substring(1, target.length);
+
+                    //If the target element is shown, prevent the action
+                    if (document.getElementById(targetID).classList.contains("show")){
+                        event.stopPropagation();
+                    }
+                });
+            }
+        )
     </script>
 {% endblock %}
