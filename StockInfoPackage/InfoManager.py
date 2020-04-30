@@ -5,7 +5,6 @@ import LocalDataManager as LM
 import DataValidator as DV
 import threading
 import json
-import os 
 
 regressionLimit = 3
 
@@ -14,7 +13,7 @@ DEBUG = True
 default_quality='high'
 
 #Get the list of avilable stocks\cryptos and their names
-with open(os.path.abspath("./Datafiles/stockTickers.json"), "r") as stockFile, open(os.path.abspath("./Datafiles/cryptoTickers.json"), "r") as cryptoFile:
+with open("./Datafiles/cryptoTickers.json", "r") as cryptoFile, open("./Datafiles/stockTickers.json", "r") as stockFile:
     tickerData:dict = json.loads(stockFile.read())
     cryptoTickers:dict = json.loads(cryptoFile.read())
 
