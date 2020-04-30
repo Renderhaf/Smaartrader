@@ -13,12 +13,12 @@ DEBUG = True
 default_quality='high'
 
 #Get the list of avilable stocks and their names
-with open("./DataFiles/stockTickers.json", "r") as file:
-    tickerData:dict = json.loads(file.read())
+with open("./DataFiles/stockTickers.json", "r") as file1:
+    tickerData:dict = json.loads(file1.read())
 
 #Get the list of avilable cryptos and their names
-with open("./Datafiles/cryptoTickers.json", "r") as file:
-    cryptoTickers:dict = json.loads(file.read())
+with open("./Datafiles/cryptoTickers.json", "r") as file2:
+    cryptoTickers:dict = json.loads(file2.read())
 
 
 def getName(ticker:str)->str:
