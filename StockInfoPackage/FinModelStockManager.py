@@ -100,9 +100,9 @@ def getQuote(symbol):
         rawData = rawData[0]
 
     data = {
-        "current_price":rawData["price"],
+        "current_price": round(rawData["price"],2),
         "difference": rawData["change"],
-        "difference_percentage": round(rawData["changesPercentage"],3),
+        "difference_percentage": round(rawData["changesPercentage"],2),
         "marketCap": rawData["marketCap"],
         "volume": rawData["volume"]
     }
