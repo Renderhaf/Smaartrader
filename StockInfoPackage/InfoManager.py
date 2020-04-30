@@ -13,7 +13,7 @@ DEBUG = True
 default_quality='high'
 
 #Get the list of avilable stocks\cryptos and their names
-with open("./Datafiles/stockTickers.json", "r") as tickers:
+with open("./DataFiles/stockTickers.json", "r") as tickers:
     allTickers = json.loads(tickers.read())
     tickerData:dict = allTickers[0]
     cryptoTickers:dict = allTickers[1]
