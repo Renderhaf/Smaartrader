@@ -16,17 +16,25 @@ default_quality='high'
 with open("./DataFiles/stockTickers.json", "r") as file:
     tickerData:dict = json.loads(file.read())
 
+#Get the list of avilable cryptos and their names
+with open("./Datafiles/cryptoTickers.json", "r") as file:
+    cryptoTickers:dict = json.loads(file.read())
+
+
 def getName(ticker:str)->str:
     '''
     Gets the name of the stock based on its ticket. If the ticker does not have a name, the ticker is returned back
-    '''  
-    return tickerData.get(ticker, ticker)
+    '''
+    stockName = tickerData.get(ticker, ticker)
+    if stockName == ticker:
+        return cryptoTickers.get(ticker, ticker)  
+    return stockName
 
 def isAnExistingTicker(ticker:str)->bool:
     '''
     Checks if the ticker is the the pool of tickers
     '''
-    return ticker in tickerData.keys()
+    return ticker in tickerData.keys() or ticker in cryptoTickers.keys()
 
 '''
 Helper Functions
@@ -82,6 +90,7 @@ def candleDatabaseState(symbol, timeframe,quality=default_quality):
 
 candleStateOrder = [candleLocalStorageState, candleStockAPIState, candleDatabaseState]
 
+
 '''
 States and state oreder for quote supplier
 '''
@@ -132,24 +141,35 @@ def getStockCandle(symbol,timeframe='Y', quality=default_quality, timeMul=0)->di
     """
     qualities={'high':{'TTR':{'Y':'D','M':'D','W':30,'D':5},'TTC':{'Y':365,'M':30,'W':336,'D':288}},
            'low':{'TTR':{'Y':'W','M':'D','W':60,'D':30},'TTC':{'Y':52,'M':30,'W':168,'D':48}}}
+    isCrypto = symbol in cryptoTickers.keys()
 
     if timeframe == 'A':
         if quality in qualities.keys():
-            return NSM.getAllHistoricData(symbol, quality)
+            data = NSM.getAllHistoricData(symbol, quality, isCrypto=isCrypto)
         else:
-            return NSM.getAllHistoricData(symbol, default_quality)
-
-
+            data = NSM.getAllHistoricData(symbol, default_quality, isCrypto=isCrypto)
+        return data
 
     timeToResolution={'Y':'D','M':'D','W':30,'D':5}
 
-    if quality in qualities.keys():
-        return SM.getCandle(symbol,qualities[quality]['TTR'][timeframe],(1 + timeMul)*qualities[quality]['TTC'][timeframe])
+    if isCrypto:
+        if quality in qualities.keys():
+            data = NSM.getCandle(symbol, timeframe, quality, isCrypto=True)
 
+        else:
+            if DEBUG:
+                print('Not a quality')
+            data = NSM.getCandle(symbol, "Y", "high")
     else:
-        if DEBUG:
-            print('Not a quality')
-        return SM.getCandle(symbol,qualities[default_quality]['TTR'][timeframe],(1 + timeMul)*qualities[default_quality]['TTC'][timeframe])
+        if quality in qualities.keys():
+            data = SM.getCandle(symbol,qualities[quality]['TTR'][timeframe],(1 + timeMul)*qualities[quality]['TTC'][timeframe])
+
+        else:
+            if DEBUG:
+                print('Not a quality')
+            data = SM.getCandle(symbol,qualities[default_quality]['TTR'][timeframe],(1 + timeMul)*qualities[default_quality]['TTC'][timeframe])
+    
+    return data
 
 def getStockQuote(symbol)->dict:
     """get current quote of stock
@@ -160,7 +180,10 @@ def getStockQuote(symbol)->dict:
     Returns:
         dict -- the quote
     """
-    return SM.getQuote(symbol)
+    if symbol in cryptoTickers.keys():
+        return NSM.getQuote(symbol)
+    else:
+        return SM.getQuote(symbol)
 
 def getCandle(symbol,timeframe='Y', quality=default_quality, forceAPI=False)->dict:
     """general getcandle, decides where to take the candle from
@@ -252,10 +275,10 @@ def updateDBFromData(data, symbol,timeframe='Y', quality=default_quality)->None:
 
 
 def main():
-    STOCKNAME = "TSLA"
+    STOCKNAME = "BTCUSD"
 
-    print(len(getCandle(STOCKNAME, 'A', quality="high")['c']))
-    # print(getQuote(STOCKNAME))
+    # print(len(getCandle(STOCKNAME, 'D', quality="low")['c']))
+    print(getCandle(STOCKNAME, timeframe="Y"))
 
 if __name__ == "__main__":
     main()

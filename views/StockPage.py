@@ -15,14 +15,16 @@ def singleStockPage(stockname):
     if WebSecurity.checkForSpecialChars(stockname) or not IM.isAnExistingTicker(stockname):
         return "<h1>That is not a valid stock ticker</h1>"
 
-    stockTrend = SI.getCurrentTrend(stockname)
+    closeData = IM.getCandle(stockname, timeframe="Y", quality="high").get("c")
+
+    stockTrend = SI.getCurrentTrend(stockname, closeData=closeData)
 
     sampleSize = 25
 
-    historicSMA = SI.getHistoricSMA(stockname, sampleSize)
+    historicSMA = SI.getHistoricSMA(stockname, sampleSize , closeData=closeData)
     currentSMA = round(historicSMA[-1],2)
 
-    historicEMA, stockPrice = SI.getHistoricEMA(stockname, sampleSize, True)
+    historicEMA, stockPrice = SI.getHistoricEMA(stockname, sampleSize, True, closeData=closeData)
     currentEMA = round(historicEMA[-1],2)
 
     # Indicator Name | Indicator Value | is Indicator giving a positive view
