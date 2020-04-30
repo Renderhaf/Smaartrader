@@ -1,6 +1,5 @@
 requests
 flask
-numpy
 matplotlib
 pymongo
 dnspython
