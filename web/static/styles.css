@@ -54,6 +54,20 @@ body{
   margin-top: 1.5rem;
 }
 
+.info-row{
+  display: flex;
+  justify-content: center;
+}
+
+/* Between medium and small, the info bar goes left */
+
+@media screen and (max-width: 1510px) and (min-width: 990px){
+  .info-row{
+    justify-content: left;
+  }
+}
+
+
 /* Dark mode Settings */
 
 .dark{
