@@ -1,15 +1,11 @@
-import StockManager as SM
+import FinnhubStockManager as SM
+import FinModelStockManager as NSM
 import DatabaseManager as DM
 import LocalDataManager as LM
 import DataValidator as DV
 import threading
 import json
 
-qualities={'high':{'TTR':{'Y':'D','M':'D','W':30,'D':5},'TTC':{'Y':365,'M':30,'W':336,'D':288}},\
-    'low':{'TTR':{'Y':'W','M':'D','W':60,'D':30},'TTC':{'Y':52,'M':30,'W':168,'D':48}}}
-
-timeToResolution={'Y':'D','M':'D','W':30,'D':5}
-timeToCount={'Y':365,'M':30,'W':336,'D':288}
 regressionLimit = 3
 
 DEBUG = True
@@ -134,8 +130,22 @@ def getStockCandle(symbol,timeframe='Y', quality=default_quality, timeMul=0)->di
     Returns:
         dict -- candle
     """
+    qualities={'high':{'TTR':{'Y':'D','M':'D','W':30,'D':5},'TTC':{'Y':365,'M':30,'W':336,'D':288}},
+           'low':{'TTR':{'Y':'W','M':'D','W':60,'D':30},'TTC':{'Y':52,'M':30,'W':168,'D':48}}}
+
+    if timeframe == 'A':
+        if quality in qualities.keys():
+            return NSM.getAllHistoricData(symbol, quality)
+        else:
+            return NSM.getAllHistoricData(symbol, default_quality)
+
+
+
+    timeToResolution={'Y':'D','M':'D','W':30,'D':5}
+
     if quality in qualities.keys():
         return SM.getCandle(symbol,qualities[quality]['TTR'][timeframe],(1 + timeMul)*qualities[quality]['TTC'][timeframe])
+
     else:
         if DEBUG:
             print('Not a quality')
@@ -243,8 +253,9 @@ def updateDBFromData(data, symbol,timeframe='Y', quality=default_quality)->None:
 
 def main():
     STOCKNAME = "TSLA"
-    print(getCandle(STOCKNAME, 'Y'))
-    print(getQuote(STOCKNAME))
+
+    print(len(getCandle(STOCKNAME, 'A', quality="high")['c']))
+    # print(getQuote(STOCKNAME))
 
 if __name__ == "__main__":
     main()

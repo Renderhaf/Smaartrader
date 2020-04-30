@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import InfoManager as IM
 
 
-def getWikiArticle(ticker: str)->str:
+def getWikiArticle(ticker: str) -> str:
     '''
     returns a wikipedia article about the stock ticker. If it cant find a article, it gives an article about the stock market
     '''
@@ -16,7 +16,8 @@ def getWikiArticle(ticker: str)->str:
         return defaultArticle
     else:
         quary = name
-    url = 'https://en.wikipedia.org/w/api.php?action=opensearch&search="{}"&limit=1&format=json'.format(quary)
+    url = 'https://en.wikipedia.org/w/api.php?action=opensearch&search="{}"&limit=1&format=json'.format(
+        quary)
 
     try:
         wikilink = requests.get(url).json()[-1][0].replace("en.", "en.m.")
@@ -24,16 +25,18 @@ def getWikiArticle(ticker: str)->str:
         return defaultArticle
     return wikilink
 
-def getCurrentTrend(ticker: str, weeksBack:int=1):
+
+def getCurrentTrend(ticker: str, weeksBack: int = 1):
     '''
     returns the current trend for @param weeksBack in precentage
     '''
     stockData = IM.getCandle(ticker, timeframe="Y", quality="high").get("c")
     priceDiff = stockData[-1] - stockData[-weeksBack*7]
     diffPrecentage = (priceDiff / stockData[-weeksBack*7]) * 100
-    return round(diffPrecentage,3)
+    return round(diffPrecentage, 3)
 
-def getHistoricSMA(ticker: str, sampleSize: int=25):
+
+def getHistoricSMA(ticker: str, sampleSize: int = 25):
     '''
     returns a list of a simple moving avarage (equal weighted)
 
@@ -42,26 +45,29 @@ def getHistoricSMA(ticker: str, sampleSize: int=25):
     stockData = IM.getCandle(ticker, timeframe="Y", quality="high").get("c")
     sma = []
     for i in range(0, len(stockData)-sampleSize):
-        sma.append(sum(stockData[i : i + sampleSize])/sampleSize)
+        sma.append(sum(stockData[i: i + sampleSize])/sampleSize)
     return sma
 
-def getCurrentSMA(ticker: str, sampleSize: int=25, returnPrice: bool=False):
+
+def getCurrentSMA(ticker: str, sampleSize: int = 25, returnPrice: bool = False):
     '''
     returns the current simple avarage with @param sampleSize days
 
     * if @param returnPrice is true, this will return a tuple containing the SMA and the current price (mostly used for comparison)
     '''
-    stockData = IM.getCandle(ticker, timeframe="Y", quality="high").get("c")[-sampleSize-1:]
+    stockData = IM.getCandle(ticker, timeframe="Y",
+                             quality="high").get("c")[-sampleSize-1:]
     sma = 0
     for i in range(0, len(stockData)-sampleSize):
-        sma = (sum(stockData[i : i + sampleSize])/sampleSize)
-    
-    if returnPrice:
-        return round(sma,2), stockData[-1]
-    else:
-        return round(sma,2)
+        sma = (sum(stockData[i: i + sampleSize])/sampleSize)
 
-def getHistoricEMA(ticker: str, sampleSize: int=25, returnPrice: bool=False):
+    if returnPrice:
+        return round(sma, 2), stockData[-1]
+    else:
+        return round(sma, 2)
+
+
+def getHistoricEMA(ticker: str, sampleSize: int = 25, returnPrice: bool = False):
     '''
     returns a list of a exponential moving avarage (equal weighted)
 
@@ -77,22 +83,25 @@ def getHistoricEMA(ticker: str, sampleSize: int=25, returnPrice: bool=False):
             ema.append(sum(stockData[i - sampleSize + 1: i]) / sampleSize)
         else:
             # Calculate todays EMA, based on yesterdays EMA
-            ema.append( ((stockData[i]-ema[len(ema)-1]) * mult) + ema[len(ema)-1])
+            ema.append(((stockData[i]-ema[len(ema)-1])
+                        * mult) + ema[len(ema)-1])
 
     if returnPrice:
         return ema, stockData[-1]
     return ema
 
-def getCurrentEMA(ticker: str, sampleSize: int=20, returnPrice: bool=False):
+
+def getCurrentEMA(ticker: str, sampleSize: int = 20, returnPrice: bool = False):
     '''
     returns the current exponential avarage with @param sampleSize days
-    
+
     * if @param returnPrice is true, this will return a tuple containing the EMA and the current price (mostly used for comparison)
     '''
 
     if returnPrice:
-        return round(getHistoricEMA(ticker, sampleSize, True)[-1],2)
-    return round(getHistoricEMA(ticker, sampleSize)[-1],2)
+        return round(getHistoricEMA(ticker, sampleSize, True)[-1], 2)
+    return round(getHistoricEMA(ticker, sampleSize)[-1], 2)
+
 
 def test():
     ticker = 'AAPL'
@@ -112,6 +121,6 @@ def test():
     print(getCurrentEMA("AAPL", sampleSize), emaY[-1])
     plt.show()
 
+
 if __name__ == "__main__":
     test()
-

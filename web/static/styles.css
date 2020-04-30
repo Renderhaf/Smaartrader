@@ -37,6 +37,14 @@ body{
   border-bottom-left-radius: 0.25rem !important;
 }
 
+
+@media (max-width: 980px){
+  .round-sm{
+    border-top-left-radius: 0.25rem !important;
+    border-bottom-left-radius: 0.25rem !important;
+  }
+}
+
 .accordion{
   height: 100%;
   border-bottom: 1px solid rgba(0,0,0,.125);
@@ -45,6 +53,20 @@ body{
 .top-btn{
   margin-top: 1.5rem;
 }
+
+.info-row{
+  display: flex;
+  justify-content: center;
+}
+
+/* Between medium and small, the info bar goes left */
+
+@media screen and (max-width: 1510px) and (min-width: 990px){
+  .info-row{
+    justify-content: left;
+  }
+}
+
 
 /* Dark mode Settings */
 

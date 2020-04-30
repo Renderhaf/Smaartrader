@@ -16,7 +16,7 @@
                             <p class="name-text">{{name}}</p>
                         </div>
                     </div>
-                    <div class="row justify-content-center">
+                    <div class="row info-row">
                         <div class="col-2">
                             <span id="{{stock}}Price"></span>
                         </div>
@@ -29,9 +29,10 @@
                         
                         <div class="col-3 mr-0 pr-0 col-md-4">
                             <div class="btn-group" data="{{stock}}">
-                                <div class="btn btn-primary" onclick="elementSelectTime(this, true)">Y</div>
+                                <div class="btn btn-secondary d-none d-lg-block" onclick="elementSelectTime(this)">A</div>
+                                <div class="btn btn-primary round-sm" onclick="elementSelectTime(this, true)">Y</div>
                                 <div class="btn btn-secondary" onclick="elementSelectTime(this)">M</div>
-                                <div class="btn btn-secondary d-none d-lg-block" onclick="elementSelectTime(this)">W</div>
+                                <div class="btn btn-secondary d-none d-xl-block" onclick="elementSelectTime(this)">W</div>
                                 <div class="btn btn-secondary" onclick="elementSelectTime(this)">D</div>
                             </div>
                         </div>
@@ -90,7 +91,7 @@
                                 var ctx;
                                 
                                 //make an HTTP post request to the server, asking for the candle and quote data
-                                $.post("/", {"type":"quote+candle", "name":"{{stock}}", "time": "Y", "isMulti":false, "quality": "{{quality}}"}, function(stockData, succsses){
+                                $.post("/api", {"type":"quote+candle", "name":"{{stock}}", "time": "Y", "isMulti":false, "quality": "{{quality}}"}, function(stockData, succsses){
                                     let stockPrice = stockData["current_price"].toString().slice(0,-1);
                                     document.getElementById("{{stock}}Price").innerHTML = stockPrice + "$  "
     
@@ -179,7 +180,7 @@
                     <div class="card">
                         <div class="card-header" id="headingOne">
                             <h5 class="mb-0">
-                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <button class="btn btn-link accordion-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                 Wikipedia Article
                                 </button>
                             </h5>
@@ -195,7 +196,7 @@
 
                         <div class="card-header" id="headingTwo">
                             <h5 class="mb-0">
-                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <button class="btn btn-link accordion-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                 Analysis
                                 </button>
                             </h5>
@@ -261,7 +262,7 @@
             btn.classList.add("btn-primary");
 
             //get the new info and update the chart with it
-            $.post("/", {"type":"candle", "name":btn.parentElement.getAttribute("data"), "time": btn.innerHTML, "quality": "{{quality}}"}, function(stockData, succsses){
+            $.post("/api", {"type":"candle", "name":btn.parentElement.getAttribute("data"), "time": btn.innerHTML, "quality": "{{quality}}"}, function(stockData, succsses){
                 updateChart(Chart, stockData["prices"], stockData["dates"], isMain);
             });
         }
@@ -326,9 +327,25 @@
             chart.update();  
         }
 
+        //Staticaly set the hight of the wikipedia window 
         $(document).ready(function() {
             $(".side-info").css("height", $(".main-row").height());
             $(".wiki-collapse").css("height", $(".main-row").height());
         });
+
+        //Prevent the user from collapsing all accordion windows
+        Array.from(document.getElementsByClassName("accordion-link")).forEach(
+            (elem) => {
+                elem.addEventListener("click", function (event){
+                    let target = elem.getAttribute("data-target");
+                    const targetID = target.substring(1, target.length);
+
+                    //If the target element is shown, prevent the action
+                    if (document.getElementById(targetID).classList.contains("show")){
+                        event.stopPropagation();
+                    }
+                });
+            }
+        )
     </script>
 {% endblock %}
