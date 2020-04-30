@@ -5,7 +5,7 @@ import sys
 
 sys.path.insert(1, './StockInfoPackage/')
 
-import StockManager as SM
+import FinnhubStockManager as SM
 import DatabaseManager as DM
 import InfoManager as IM
 import LocalDataManager as LM

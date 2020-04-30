@@ -2,10 +2,17 @@ import pymongo
 import DataValidator as DV
 import os
 import random
+import sys
 
 print("Connecting to Atlas....")
 MONGODB_KEY = os.getenv("MONGODB_KEY")
-client = pymongo.MongoClient("mongodb+srv://{}@maincluster-zlnck.mongodb.net/test?retryWrites=true&w=majority".format(MONGODB_KEY))
+
+try:
+    client = pymongo.MongoClient("mongodb+srv://{}@maincluster-zlnck.mongodb.net/test?retryWrites=true&w=majority".format(MONGODB_KEY))
+except Exception:
+    print("No client Password supplied or timeout occured!")
+    sys.exit(-1)
+
 print("Connected to Atlas!")
 
 database = client.get_database("StocksInfo")
