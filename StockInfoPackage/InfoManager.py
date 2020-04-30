@@ -12,13 +12,11 @@ DEBUG = True
 
 default_quality='high'
 
-#Get the list of avilable stocks and their names
-with open("./DataFiles/stockTickers.json", "r") as file:
-    tickerData:dict = json.loads(file.read())
-
-#Get the list of avilable cryptos and their names
-with open("./Datafiles/cryptoTickers.json", "r") as file:
-    cryptoTickers:dict = json.loads(file.read())
+#Get the list of avilable stocks\cryptos and their names
+with open("./Datafiles/stockTickers.json", "r") as tickers:
+    allTickers = json.loads(tickers.read())
+    tickerData:dict = allTickers[0]
+    cryptoTickers:dict = allTickers[1]
 
 
 def getName(ticker:str)->str:
@@ -278,7 +276,7 @@ def main():
     STOCKNAME = "BTCUSD"
 
     # print(len(getCandle(STOCKNAME, 'D', quality="low")['c']))
-    print(getCandle(STOCKNAME, timeframe="Y"))
+    # print(getCandle(STOCKNAME, timeframe="Y"))
 
 if __name__ == "__main__":
     main()
