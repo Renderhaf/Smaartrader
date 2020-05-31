@@ -76,6 +76,7 @@ def getAllHistoricData(symbol:str, quality='high', isSparse=True, isCrypto=False
     except Exception:
         return {}
 
+    print("\n{}".format(data))
     c = [day["close"] for day in data['historical']]
     t = [day["date"] for day in data['historical']]
 
@@ -112,7 +113,7 @@ def getQuote(symbol):
 def main():
     import matplotlib.pyplot as plt
     # print(getQuote("BTCUSD"))
-    d = getAllHistoricData("BTCUSD", "high", True, True)
+    d = getAllHistoricData("AAPL")
     plt.plot(d['c'])
     plt.show()
     

@@ -273,9 +273,9 @@ def updateDBFromData(data, symbol,timeframe='Y', quality=default_quality)->None:
 
 
 def main():
-    STOCKNAME = "BTCUSD"
+    STOCKNAME = "AAPL"
 
-    # print(len(getCandle(STOCKNAME, 'D', quality="low")['c']))
+    print(len(getCandle(STOCKNAME, 'Y', quality="low")['c']))
     # print(getCandle(STOCKNAME, timeframe="Y"))
 
 if __name__ == "__main__":

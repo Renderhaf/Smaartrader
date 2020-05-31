@@ -3,8 +3,7 @@
         "IT": ["AAPL", "GOOGL", "MSFT", "TSLA", "NFLX", "INTC"],
         "FINANCE": ["BAC", "WFC", "C", "JPM", "SCHW", "AXP"],
         "HEALTH": ["TEVA","ABT","CVS","GILD","PFE","JNJ"],
-        "INDICIES": ["^GSPC", "^DJI", "^IXIC", "^VIX", "^STI", "^GDAXI"],
-        "CRYPTO": ["BTCUSD","ETHUSD","LTCUSD","XMRUSD","DASHUSD","XRPUSD"]
+        "INDICIES": ["^GSPC", "^DJI", "^IXIC", "^VIX", "^STI", "^GDAXI"]
     },
     "mobilePlatforms" : ["android", "iphone"]
 }
